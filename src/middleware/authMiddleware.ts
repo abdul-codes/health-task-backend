@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { asyncMiddleware } from "./asyncMiddleware";
 import { prisma } from "../utils/db";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../generated/prisma";
 
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN as string;
