@@ -14,6 +14,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   id              String            @id @unique @default(cuid())
   email           String            @unique
@@ -30,8 +31,21 @@ model User {
   OtpAttempts     OtpAttempts?
   emailVerified   DateTime?
   OtpVerification OtpVerification[]
+  passwordReset   PasswordReset[]
+  loginTokens     LoginToken?
 
-  @@index([email, role, userAccountId])
+  @@index([email, role])
+}
+
+model LoginToken {
+  id        String   @id @default(uuid())
+  tokenHashSHA256 String   @unique // For fast lookups
+  tokenHashBcrypt String   // For secure validation  expiresAt DateTime
+  used      Boolean  @default(false)
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt  DateTime?
 }
 
 enum UserRole {
@@ -57,4 +71,16 @@ model OtpAttempts {
   lastTry  DateTime @default(now())
   userId   String   @unique
   User     User     @relation(fields: [userId], references: [id])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  User      User     @relation(fields: [userId], references: [id])
+  token     String
+  expiresAt DateTime
+  createdAt DateTime
+
+  @@index([expiresAt]) // For efficient cleanup of expired tokens
+  @@index([userId]) // For finding user's active reset requests
 }

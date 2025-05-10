@@ -4,3 +4,9 @@ export const generateOtp = () => {
   return otp
 }
 
+
+export const generatePasswordResetToken = () => {
+  // 3. Generate password reset token (expires in 1 hour)
+  const token = crypto.randomBytes(32).toString("hex");
+  return token
+}

@@ -1,14 +1,33 @@
-import express from 'express';
+import express, { Request, Response } from 'express'
+import cors from 'cors'
+import "dotenv/config"
+import compression from "compression"
+// import authRoutes from "./routes/AuthRoutes"
+// import userRoutes from "./routes/UserRoutes"
+import limiter from './middleware/rateLimitMiddleware'
 
-const app = express();
-const PORT = 5000;
+const app = express()
 
-app.use(express.json());
+app.use(compression())
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+app.use(cors())
+app.use(limiter)
 
-app.get('/', (req, res) => {
-  res.send('Hello from TypeScript Express!');
-});
 
+// app.use('/auth', authRoutes)
+// app.use('/users', userRoutes)
+
+//To use it only for a certain path (e.g., limit only calls to the /auth/* endpoints), 
+// specify the url as the first parameter in app.use
+// app.use('/auth', limiter)
+
+app.get("/api/test", async(req: Request, res: Response) => {
+    res.json({messsage: "hello and welcome back"})
+})
+
+const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    console.log("Server running on localhost:8000");
+    
+})
