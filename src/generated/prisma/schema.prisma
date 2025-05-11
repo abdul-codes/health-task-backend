@@ -21,6 +21,7 @@ model User {
   password        String
   firstName       String
   lastName        String
+  department      String
   profilePicture  String?
   role            UserRole          @default(DOCTOR)
   createdAt       DateTime          @default(now())
