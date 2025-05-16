@@ -124,14 +124,14 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   firstName: 'firstName',
   lastName: 'lastName',
-  department: 'department',
+  departmentId: 'departmentId',
   profilePicture: 'profilePicture',
-  role: 'role',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   lastLogin: 'lastLogin',
   loginAttempts: 'loginAttempts',
-  emailVerified: 'emailVerified'
+  emailVerified: 'emailVerified',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.LoginTokenScalarFieldEnum = {
@@ -142,6 +142,34 @@ exports.Prisma.LoginTokenScalarFieldEnum = {
   userId: 'userId',
   createdAt: 'createdAt',
   expiresAt: 'expiresAt'
+};
+
+exports.Prisma.TaskScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  priority: 'priority',
+  dueDate: 'dueDate',
+  createdAt: 'createdAt',
+  createdById: 'createdById',
+  assignedToId: 'assignedToId',
+  patientId: 'patientId'
+};
+
+exports.Prisma.PatientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  dob: 'dob',
+  medicalRecord: 'medicalRecord',
+  createdAt: 'createdAt',
+  createdById: 'createdById'
+};
+
+exports.Prisma.DepartmentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description'
 };
 
 exports.Prisma.OtpVerificationScalarFieldEnum = {
@@ -187,9 +215,26 @@ exports.UserRole = exports.$Enums.UserRole = {
   LABTECH: 'LABTECH'
 };
 
+exports.TaskStatus = exports.$Enums.TaskStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TaskPriority = exports.$Enums.TaskPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   LoginToken: 'LoginToken',
+  Task: 'Task',
+  Patient: 'Patient',
+  Department: 'Department',
   OtpVerification: 'OtpVerification',
   OtpAttempts: 'OtpAttempts',
   PasswordReset: 'PasswordReset'

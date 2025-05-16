@@ -21,11 +21,11 @@ model User {
   password        String
   firstName       String
   lastName        String
-  department      String
+  createdTasks    Task[]            @relation("CreatedTasks")
+  assignedTasks   Task[]            @relation("AssignedTasks")
+  department      Department?       @relation(fields: [departmentId], references: [id])
+  departmentId    String?
   profilePicture  String?
-  role            UserRole          @default(DOCTOR)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
   lastLogin       DateTime?
   loginAttempts   Int               @default(0)
   OtpAttempts     OtpAttempts?
@@ -33,6 +33,10 @@ model User {
   OtpVerification OtpVerification[]
   passwordReset   PasswordReset[]
   loginTokens     LoginToken?
+  role            UserRole          @default(DOCTOR)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  patientsCreated Patient[]         @relation("CreatedPatients")
 
   @@index([email, role])
 }
@@ -53,6 +57,54 @@ enum UserRole {
   DOCTOR
   NURSE
   LABTECH
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Task {
+  id           String       @id @default(cuid())
+  title        String
+  description  String
+  status       TaskStatus   @default(PENDING)
+  priority     TaskPriority @default(MEDIUM)
+  dueDate      DateTime
+  createdAt    DateTime     @default(now())
+  createdBy    User         @relation("CreatedTasks", fields: [createdById], references: [id])
+  createdById  String
+  assignedTo   User?        @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  assignedToId String?
+  patient      Patient?     @relation(fields: [patientId], references: [id])
+  patientId    String?
+}
+
+model Patient {
+  id            String   @id @default(cuid())
+  name          String
+  dob           DateTime
+  medicalRecord String
+  createdAt     DateTime @default(now())
+  createdBy     User?    @relation("CreatedPatients", fields: [createdById], references: [id])
+  createdById   String
+  tasks         Task[]
+}
+
+model Department {
+  id          String @id @default(cuid())
+  name        String
+  description String
+  users       User[]
 }
 
 model OtpVerification {

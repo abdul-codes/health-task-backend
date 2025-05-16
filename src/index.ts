@@ -2,8 +2,11 @@ import express, { Request, Response } from 'express'
 import cors from 'cors'
 import "dotenv/config"
 import compression from "compression"
-// import authRoutes from "./routes/AuthRoutes"
-// import userRoutes from "./routes/UserRoutes"
+import authRoutes from "./routes/authRoutes"
+import userRoutes from "./routes/userRoutes"
+import patientRoutes from "./routes/patientRoutes"
+import taskRoutes from "./routes/taskRoutes"
+
 import limiter from './middleware/rateLimitMiddleware'
 
 const app = express()
@@ -15,8 +18,10 @@ app.use(cors())
 app.use(limiter)
 
 
-// app.use('/auth', authRoutes)
-// app.use('/users', userRoutes)
+app.use('/auth', authRoutes)
+app.use('/users', userRoutes)
+app.use('/patients', patientRoutes)
+app.use('/tasks', taskRoutes)
 
 //To use it only for a certain path (e.g., limit only calls to the /auth/* endpoints), 
 // specify the url as the first parameter in app.use
