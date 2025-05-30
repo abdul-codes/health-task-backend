@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { asyncMiddleware } from "../middleware/asyncMiddleware";
 import { prisma } from "../utils/db";
 import bcrypt from "bcryptjs";
+import { UserRole } from "@/generated/prisma";
 
 // Get user profile
 export const getUserProfile = asyncMiddleware(async (req: Request, res: Response) => {
@@ -24,7 +25,6 @@ export const getUserProfile = asyncMiddleware(async (req: Request, res: Response
         role: true,
         createdAt: true,
         updatedAt: true,
-        lastLogin: true,
       },
     });
 
@@ -164,11 +164,6 @@ export const deleteUserAccount = asyncMiddleware(async (req: Request, res: Respo
 
     // Delete user and all related data in a transaction
     await prisma.$transaction([
-      // Delete related records first
-      prisma.loginToken.deleteMany({ where: { userId } }),
-      prisma.otpVerification.deleteMany({ where: { userId } }),
-      prisma.otpAttempts.deleteMany({ where: { userId } }),
-      prisma.passwordReset.deleteMany({ where: { userId } }),
       // Finally delete the user
       prisma.user.delete({ where: { id: userId } }),
     ]);
@@ -185,6 +180,156 @@ export const deleteUserAccount = asyncMiddleware(async (req: Request, res: Respo
     console.error("Delete account error:", error);
     res.status(500).json({
       message: "Error deleting account",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get pending user registrations (Admin only)
+export const getPendingUsers = asyncMiddleware(async (req: Request, res: Response) => {
+  try {
+    const adminId = req.user?.id;
+    const adminRole = req.user?.role;
+
+    if (!adminId || adminRole !== UserRole.ADMIN) {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+
+    const pendingUsers = await prisma.user.findMany({
+      where: { 
+        isApproved: false 
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        createdAt: true,
+        department: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    res.json({
+      count: pendingUsers.length,
+      users: pendingUsers
+    });
+  } catch (error) {
+    console.error("Get pending users error:", error);
+    res.status(500).json({
+      message: "Error fetching pending users",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Approve a user registration (Admin only)
+export const approveUser = asyncMiddleware(async (req: Request, res: Response) => {
+  try {
+    const adminId = req.user?.id;
+    const adminRole = req.user?.role;
+    const { userId } = req.params;
+
+    if (!adminId || adminRole !== UserRole.ADMIN) {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isApproved) {
+      return res.status(400).json({ message: "User is already approved" });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isApproved: true,
+        approvedById: adminId,
+        approvedAt: new Date()
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        isApproved: true,
+        approvedAt: true
+      }
+    });
+
+    // Here you could add code to notify the user that their account was approved
+    // For example, sending an email to the user
+
+    res.json({
+      message: "User approved successfully",
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error("Approve user error:", error);
+    res.status(500).json({
+      message: "Error approving user",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Reject a user registration (Admin only)
+export const rejectUser = asyncMiddleware(async (req: Request, res: Response) => {
+  try {
+    const adminId = req.user?.id;
+    const adminRole = req.user?.role;
+    const { userId } = req.params;
+    const { reason } = req.body;
+
+    if (!adminId || adminRole !== UserRole.ADMIN) {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Delete the user and all related data
+    await prisma.$transaction([
+      prisma.user.delete({ where: { id: userId } })
+    ]);
+
+    // Here you could add code to notify the user that their registration was rejected
+    // For example, sending an email with the rejection reason
+
+    res.json({
+      message: "User registration rejected",
+      user: {
+        id: user.id,
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`
+      },
+      reason: reason || "No reason provided"
+    });
+  } catch (error) {
+    console.error("Reject user error:", error);
+    res.status(500).json({
+      message: "Error rejecting user",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }

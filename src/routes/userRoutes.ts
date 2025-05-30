@@ -5,6 +5,9 @@ import {
   updateUserProfile,
   updateUserPassword,
   deleteUserAccount,
+  getPendingUsers,
+  approveUser,
+  rejectUser
 } from "../controller/userController";
 import { validateUpdateProfile, validateUpdatePassword } from "../validation/userValidation";
 
@@ -13,16 +16,15 @@ const router = Router();
 // All routes require authentication
 router.use(authenticateUser);
 
-// Get user profile
+// User profile routes
 router.get("/userprofile", getUserProfile);
-
-// Update user profile
 router.put("/userprofile", validateUpdateProfile, updateUserProfile);
-
-// Update user password
 router.put("/password", validateUpdatePassword, updateUserPassword);
-
-// Delete user account
 router.delete("/account", deleteUserAccount);
+
+// Admin routes for user approval
+router.get("/pending", getPendingUsers);
+router.put("/approve/:userId", approveUser);
+router.delete("/reject/:userId", rejectUser);
 
 export default router;

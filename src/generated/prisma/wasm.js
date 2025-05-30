@@ -126,22 +126,12 @@ exports.Prisma.UserScalarFieldEnum = {
   lastName: 'lastName',
   departmentId: 'departmentId',
   profilePicture: 'profilePicture',
-  lastLogin: 'lastLogin',
-  loginAttempts: 'loginAttempts',
-  emailVerified: 'emailVerified',
   role: 'role',
+  isApproved: 'isApproved',
+  approvedById: 'approvedById',
+  approvedAt: 'approvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-};
-
-exports.Prisma.LoginTokenScalarFieldEnum = {
-  id: 'id',
-  tokenHashSHA256: 'tokenHashSHA256',
-  tokenHashBcrypt: 'tokenHashBcrypt',
-  used: 'used',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  expiresAt: 'expiresAt'
 };
 
 exports.Prisma.TaskScalarFieldEnum = {
@@ -170,28 +160,6 @@ exports.Prisma.DepartmentScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description'
-};
-
-exports.Prisma.OtpVerificationScalarFieldEnum = {
-  id: 'id',
-  otp: 'otp',
-  expires: 'expires',
-  userId: 'userId'
-};
-
-exports.Prisma.OtpAttemptsScalarFieldEnum = {
-  id: 'id',
-  attempts: 'attempts',
-  lastTry: 'lastTry',
-  userId: 'userId'
-};
-
-exports.Prisma.PasswordResetScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  token: 'token',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -226,18 +194,14 @@ exports.TaskPriority = exports.$Enums.TaskPriority = {
   LOW: 'LOW',
   MEDIUM: 'MEDIUM',
   HIGH: 'HIGH',
-  URGENT: 'URGENT'
+  CRITICAL: 'CRITICAL'
 };
 
 exports.Prisma.ModelName = {
   User: 'User',
-  LoginToken: 'LoginToken',
   Task: 'Task',
   Patient: 'Patient',
-  Department: 'Department',
-  OtpVerification: 'OtpVerification',
-  OtpAttempts: 'OtpAttempts',
-  PasswordReset: 'PasswordReset'
+  Department: 'Department'
 };
 
 /**

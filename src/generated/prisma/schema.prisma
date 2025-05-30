@@ -15,41 +15,29 @@ datasource db {
 }
 
 model User {
-  id              String            @id @unique @default(cuid())
-  email           String            @unique
-  phoneNumber     String?           @unique
+  id              String      @id @unique @default(cuid())
+  email           String      @unique
+  phoneNumber     String?     @unique
   password        String
   firstName       String
   lastName        String
-  createdTasks    Task[]            @relation("CreatedTasks")
-  assignedTasks   Task[]            @relation("AssignedTasks")
-  department      Department?       @relation(fields: [departmentId], references: [id])
+  createdTasks    Task[]      @relation("CreatedTasks")
+  assignedTasks   Task[]      @relation("AssignedTasks")
+  department      Department? @relation(fields: [departmentId], references: [id])
   departmentId    String?
   profilePicture  String?
-  lastLogin       DateTime?
-  loginAttempts   Int               @default(0)
-  OtpAttempts     OtpAttempts?
-  emailVerified   DateTime?
-  OtpVerification OtpVerification[]
-  passwordReset   PasswordReset[]
-  loginTokens     LoginToken?
-  role            UserRole          @default(DOCTOR)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  patientsCreated Patient[]         @relation("CreatedPatients")
+  role            UserRole    @default(DOCTOR)
+  isApproved      Boolean     @default(false)
+  approvedBy      User?       @relation("ApprovedUsers", fields: [approvedById], references: [id])
+  approvedById    String?
+  approvedUsers   User[]      @relation("ApprovedUsers")
+  approvedAt      DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  createdPatients Patient[]   @relation("CreatedPatients")
 
   @@index([email, role])
-}
-
-model LoginToken {
-  id              String    @id @default(uuid())
-  tokenHashSHA256 String    @unique // For fast lookups
-  tokenHashBcrypt String // For secure validation  expiresAt DateTime
-  used            Boolean   @default(false)
-  userId          String    @unique
-  user            User      @relation(fields: [userId], references: [id])
-  createdAt       DateTime  @default(now())
-  expiresAt       DateTime?
+  @@index([isApproved])
 }
 
 enum UserRole {
@@ -70,7 +58,7 @@ enum TaskPriority {
   LOW
   MEDIUM
   HIGH
-  URGENT
+  CRITICAL
 }
 
 model Task {
@@ -105,34 +93,4 @@ model Department {
   name        String
   description String
   users       User[]
-}
-
-model OtpVerification {
-  id      String   @id @default(cuid())
-  otp     String   @unique
-  expires DateTime
-  userId  String
-  User    User     @relation(fields: [userId], references: [id])
-
-  @@unique([userId, otp])
-}
-
-model OtpAttempts {
-  id       String   @id @default(cuid())
-  attempts Int      @default(0)
-  lastTry  DateTime @default(now())
-  userId   String   @unique
-  User     User     @relation(fields: [userId], references: [id])
-}
-
-model PasswordReset {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  User      User     @relation(fields: [userId], references: [id])
-  token     String
-  expiresAt DateTime
-  createdAt DateTime
-
-  @@index([expiresAt]) // For efficient cleanup of expired tokens
-  @@index([userId]) // For finding user's active reset requests
 }
