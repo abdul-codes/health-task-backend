@@ -81,6 +81,7 @@ model Patient {
   id            String   @id @default(cuid())
   name          String
   dob           DateTime
+  roomNumber    String
   medicalRecord String
   createdAt     DateTime @default(now())
   createdBy     User?    @relation("CreatedPatients", fields: [createdById], references: [id])

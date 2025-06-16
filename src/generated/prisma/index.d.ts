@@ -3490,6 +3490,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     dob: Date | null
+    roomNumber: string | null
     medicalRecord: string | null
     createdAt: Date | null
     createdById: string | null
@@ -3499,6 +3500,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     dob: Date | null
+    roomNumber: string | null
     medicalRecord: string | null
     createdAt: Date | null
     createdById: string | null
@@ -3508,6 +3510,7 @@ export namespace Prisma {
     id: number
     name: number
     dob: number
+    roomNumber: number
     medicalRecord: number
     createdAt: number
     createdById: number
@@ -3519,6 +3522,7 @@ export namespace Prisma {
     id?: true
     name?: true
     dob?: true
+    roomNumber?: true
     medicalRecord?: true
     createdAt?: true
     createdById?: true
@@ -3528,6 +3532,7 @@ export namespace Prisma {
     id?: true
     name?: true
     dob?: true
+    roomNumber?: true
     medicalRecord?: true
     createdAt?: true
     createdById?: true
@@ -3537,6 +3542,7 @@ export namespace Prisma {
     id?: true
     name?: true
     dob?: true
+    roomNumber?: true
     medicalRecord?: true
     createdAt?: true
     createdById?: true
@@ -3619,6 +3625,7 @@ export namespace Prisma {
     id: string
     name: string
     dob: Date
+    roomNumber: string
     medicalRecord: string
     createdAt: Date
     createdById: string
@@ -3645,6 +3652,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     dob?: boolean
+    roomNumber?: boolean
     medicalRecord?: boolean
     createdAt?: boolean
     createdById?: boolean
@@ -3657,6 +3665,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     dob?: boolean
+    roomNumber?: boolean
     medicalRecord?: boolean
     createdAt?: boolean
     createdById?: boolean
@@ -3667,6 +3676,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     dob?: boolean
+    roomNumber?: boolean
     medicalRecord?: boolean
     createdAt?: boolean
     createdById?: boolean
@@ -3691,6 +3701,7 @@ export namespace Prisma {
       id: string
       name: string
       dob: Date
+      roomNumber: string
       medicalRecord: string
       createdAt: Date
       createdById: string
@@ -4092,6 +4103,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Patient", 'String'>
     readonly name: FieldRef<"Patient", 'String'>
     readonly dob: FieldRef<"Patient", 'DateTime'>
+    readonly roomNumber: FieldRef<"Patient", 'String'>
     readonly medicalRecord: FieldRef<"Patient", 'String'>
     readonly createdAt: FieldRef<"Patient", 'DateTime'>
     readonly createdById: FieldRef<"Patient", 'String'>
@@ -5440,6 +5452,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     dob: 'dob',
+    roomNumber: 'roomNumber',
     medicalRecord: 'medicalRecord',
     createdAt: 'createdAt',
     createdById: 'createdById'
@@ -5788,6 +5801,7 @@ export namespace Prisma {
     id?: StringFilter<"Patient"> | string
     name?: StringFilter<"Patient"> | string
     dob?: DateTimeFilter<"Patient"> | Date | string
+    roomNumber?: StringFilter<"Patient"> | string
     medicalRecord?: StringFilter<"Patient"> | string
     createdAt?: DateTimeFilter<"Patient"> | Date | string
     createdById?: StringFilter<"Patient"> | string
@@ -5799,6 +5813,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     dob?: SortOrder
+    roomNumber?: SortOrder
     medicalRecord?: SortOrder
     createdAt?: SortOrder
     createdById?: SortOrder
@@ -5813,6 +5828,7 @@ export namespace Prisma {
     NOT?: PatientWhereInput | PatientWhereInput[]
     name?: StringFilter<"Patient"> | string
     dob?: DateTimeFilter<"Patient"> | Date | string
+    roomNumber?: StringFilter<"Patient"> | string
     medicalRecord?: StringFilter<"Patient"> | string
     createdAt?: DateTimeFilter<"Patient"> | Date | string
     createdById?: StringFilter<"Patient"> | string
@@ -5824,6 +5840,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     dob?: SortOrder
+    roomNumber?: SortOrder
     medicalRecord?: SortOrder
     createdAt?: SortOrder
     createdById?: SortOrder
@@ -5839,6 +5856,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Patient"> | string
     name?: StringWithAggregatesFilter<"Patient"> | string
     dob?: DateTimeWithAggregatesFilter<"Patient"> | Date | string
+    roomNumber?: StringWithAggregatesFilter<"Patient"> | string
     medicalRecord?: StringWithAggregatesFilter<"Patient"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Patient"> | Date | string
     createdById?: StringWithAggregatesFilter<"Patient"> | string
@@ -6114,6 +6132,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedPatientsInput
@@ -6124,6 +6143,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
     createdById: string
@@ -6134,6 +6154,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedPatientsNestedInput
@@ -6144,6 +6165,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
@@ -6154,6 +6176,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
     createdById: string
@@ -6163,6 +6186,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6171,6 +6195,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
@@ -6551,6 +6576,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     dob?: SortOrder
+    roomNumber?: SortOrder
     medicalRecord?: SortOrder
     createdAt?: SortOrder
     createdById?: SortOrder
@@ -6560,6 +6586,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     dob?: SortOrder
+    roomNumber?: SortOrder
     medicalRecord?: SortOrder
     createdAt?: SortOrder
     createdById?: SortOrder
@@ -6569,6 +6596,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     dob?: SortOrder
+    roomNumber?: SortOrder
     medicalRecord?: SortOrder
     createdAt?: SortOrder
     createdById?: SortOrder
@@ -7352,6 +7380,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
     tasks?: TaskCreateNestedManyWithoutPatientInput
@@ -7361,6 +7390,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutPatientInput
@@ -7557,6 +7587,7 @@ export namespace Prisma {
     id?: StringFilter<"Patient"> | string
     name?: StringFilter<"Patient"> | string
     dob?: DateTimeFilter<"Patient"> | Date | string
+    roomNumber?: StringFilter<"Patient"> | string
     medicalRecord?: StringFilter<"Patient"> | string
     createdAt?: DateTimeFilter<"Patient"> | Date | string
     createdById?: StringFilter<"Patient"> | string
@@ -7656,6 +7687,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedPatientsInput
@@ -7665,6 +7697,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
     createdById: string
@@ -7792,6 +7825,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedPatientsNestedInput
@@ -7801,6 +7835,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
@@ -8062,6 +8097,7 @@ export namespace Prisma {
     id?: string
     name: string
     dob: Date | string
+    roomNumber: string
     medicalRecord: string
     createdAt?: Date | string
   }
@@ -8198,6 +8234,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUpdateManyWithoutPatientNestedInput
@@ -8207,6 +8244,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutPatientNestedInput
@@ -8216,6 +8254,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: StringFieldUpdateOperationsInput | string
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -26,7 +26,7 @@ export const registervalidation = [
 ]
 
 export const loginValidation = [
-    body("accountId").notEmpty().withMessage("email or accountId is required"),
+    body("email").isEmail().notEmpty().withMessage("Valid email is required"),
     body("password")
         .notEmpty()
         .isLength({ min: 8 })
@@ -36,12 +36,5 @@ export const loginValidation = [
     //   body('').notEmpty().withMessage('First name is required'),
     handleValidationErrors
 ]
-export const validateResendOtp = [
-    body('email').isEmail().normalizeEmail(),
-    handleValidationErrors
-]
-export const validateVeirfyOtp = [
-    body('token').isInt().notEmpty(),
-    handleValidationErrors
-]
+
 

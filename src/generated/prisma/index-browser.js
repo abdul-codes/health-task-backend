@@ -151,6 +151,7 @@ exports.Prisma.PatientScalarFieldEnum = {
   id: 'id',
   name: 'name',
   dob: 'dob',
+  roomNumber: 'roomNumber',
   medicalRecord: 'medicalRecord',
   createdAt: 'createdAt',
   createdById: 'createdById'

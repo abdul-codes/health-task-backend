@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { asyncMiddleware } from "../middleware/asyncMiddleware";
 import { prisma } from "../utils/db";
 import bcrypt from "bcryptjs";
-import { UserRole } from "@/generated/prisma";
+import { UserRole } from "../generated/prisma";
 
 // Get user profile
 export const getUserProfile = asyncMiddleware(async (req: Request, res: Response) => {
