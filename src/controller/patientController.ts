@@ -30,10 +30,7 @@ export const createPatient = asyncMiddleware(async (req: Request, res: Response)
         name,
         dob: dobDate,
         medicalRecord,
-        createdBy: {
-          connect: { id: userId }
-        },
-
+        createdById: userId,
       },
     });
 

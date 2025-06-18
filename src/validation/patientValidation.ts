@@ -8,6 +8,7 @@ export const createPatientSchema = z.object({
     return !isNaN(date.getTime());
   }, "Invalid date format for date of birth"),
   medicalRecord: z.string().min(1, "Medical record is required"),
+ // roomNumber: z.string().min(1, "Room number is required"),
 });
 
 // Schema for updating a patient
@@ -18,6 +19,7 @@ export const updatePatientSchema = z.object({
     return !isNaN(date.getTime());
   }, "Invalid date format for date of birth").optional(),
   medicalRecord: z.string().min(1, "Medical record is required").optional(),
+  roomNumber: z.string().min(1, "Room number is required").optional(),
 }).refine((data) => Object.keys(data).length > 0, {
   message: "At least one field must be provided for update",
 });

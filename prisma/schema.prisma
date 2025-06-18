@@ -12,6 +12,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // FOR SUPABASE
 }
 
 model User {
@@ -82,7 +83,7 @@ model Patient {
   id            String   @id @default(cuid())
   name          String
   dob           DateTime
-  roomNumber    String
+  roomNumber    String?
   medicalRecord String
   createdAt     DateTime @default(now())
   createdBy     User?    @relation("CreatedPatients", fields: [createdById], references: [id])
