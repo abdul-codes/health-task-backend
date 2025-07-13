@@ -1291,6 +1291,7 @@ export namespace Prisma {
     approvedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    expoPushToken: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1308,6 +1309,7 @@ export namespace Prisma {
     approvedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    expoPushToken: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1325,6 +1327,7 @@ export namespace Prisma {
     approvedAt: number
     createdAt: number
     updatedAt: number
+    expoPushToken: number
     _all: number
   }
 
@@ -1344,6 +1347,7 @@ export namespace Prisma {
     approvedAt?: true
     createdAt?: true
     updatedAt?: true
+    expoPushToken?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1361,6 +1365,7 @@ export namespace Prisma {
     approvedAt?: true
     createdAt?: true
     updatedAt?: true
+    expoPushToken?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1378,6 +1383,7 @@ export namespace Prisma {
     approvedAt?: true
     createdAt?: true
     updatedAt?: true
+    expoPushToken?: true
     _all?: true
   }
 
@@ -1468,6 +1474,7 @@ export namespace Prisma {
     approvedAt: Date | null
     createdAt: Date
     updatedAt: Date
+    expoPushToken: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1502,6 +1509,7 @@ export namespace Prisma {
     approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    expoPushToken?: boolean
     createdTasks?: boolean | User$createdTasksArgs<ExtArgs>
     assignedTasks?: boolean | User$assignedTasksArgs<ExtArgs>
     department?: boolean | User$departmentArgs<ExtArgs>
@@ -1526,6 +1534,7 @@ export namespace Prisma {
     approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    expoPushToken?: boolean
     department?: boolean | User$departmentArgs<ExtArgs>
     approvedBy?: boolean | User$approvedByArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1545,6 +1554,7 @@ export namespace Prisma {
     approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    expoPushToken?: boolean
   }
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1586,6 +1596,7 @@ export namespace Prisma {
       approvedAt: Date | null
       createdAt: Date
       updatedAt: Date
+      expoPushToken: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1999,6 +2010,7 @@ export namespace Prisma {
     readonly approvedAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly expoPushToken: FieldRef<"User", 'String'>
   }
     
 
@@ -5426,7 +5438,8 @@ export namespace Prisma {
     approvedById: 'approvedById',
     approvedAt: 'approvedAt',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    expoPushToken: 'expoPushToken'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -5611,6 +5624,7 @@ export namespace Prisma {
     approvedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    expoPushToken?: StringNullableFilter<"User"> | string | null
     createdTasks?: TaskListRelationFilter
     assignedTasks?: TaskListRelationFilter
     department?: XOR<DepartmentNullableScalarRelationFilter, DepartmentWhereInput> | null
@@ -5634,6 +5648,7 @@ export namespace Prisma {
     approvedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    expoPushToken?: SortOrderInput | SortOrder
     createdTasks?: TaskOrderByRelationAggregateInput
     assignedTasks?: TaskOrderByRelationAggregateInput
     department?: DepartmentOrderByWithRelationInput
@@ -5646,6 +5661,7 @@ export namespace Prisma {
     id?: string
     email?: string
     phoneNumber?: string
+    expoPushToken?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -5666,7 +5682,7 @@ export namespace Prisma {
     approvedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     approvedUsers?: UserListRelationFilter
     createdPatients?: PatientListRelationFilter
-  }, "id" | "id" | "email" | "phoneNumber">
+  }, "id" | "id" | "email" | "phoneNumber" | "expoPushToken">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -5683,6 +5699,7 @@ export namespace Prisma {
     approvedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    expoPushToken?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -5706,6 +5723,7 @@ export namespace Prisma {
     approvedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    expoPushToken?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type TaskWhereInput = {
@@ -5920,6 +5938,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     department?: DepartmentCreateNestedOneWithoutUsersInput
@@ -5943,6 +5962,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
@@ -5962,6 +5982,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     department?: DepartmentUpdateOneWithoutUsersNestedInput
@@ -5985,6 +6006,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -6006,6 +6028,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -6021,6 +6044,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -6038,6 +6062,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TaskCreateInput = {
@@ -6371,6 +6396,7 @@ export namespace Prisma {
     approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    expoPushToken?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -6388,6 +6414,7 @@ export namespace Prisma {
     approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    expoPushToken?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -6405,6 +6432,7 @@ export namespace Prisma {
     approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    expoPushToken?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -7294,6 +7322,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     department?: DepartmentCreateNestedOneWithoutUsersInput
@@ -7316,6 +7345,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
@@ -7339,6 +7369,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     department?: DepartmentCreateNestedOneWithoutUsersInput
@@ -7360,6 +7391,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
@@ -7501,6 +7533,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     department?: DepartmentUpdateOneWithoutUsersNestedInput
@@ -7523,6 +7556,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -7562,6 +7596,7 @@ export namespace Prisma {
     approvedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    expoPushToken?: StringNullableFilter<"User"> | string | null
   }
 
   export type PatientUpsertWithWhereUniqueWithoutCreatedByInput = {
@@ -7606,6 +7641,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     department?: DepartmentCreateNestedOneWithoutUsersInput
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
@@ -7628,6 +7664,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
@@ -7651,6 +7688,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
     department?: DepartmentCreateNestedOneWithoutUsersInput
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
@@ -7673,6 +7711,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
@@ -7732,6 +7771,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     department?: DepartmentUpdateOneWithoutUsersNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
@@ -7754,6 +7794,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -7783,6 +7824,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
     department?: DepartmentUpdateOneWithoutUsersNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
@@ -7805,6 +7847,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -7854,6 +7897,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     department?: DepartmentCreateNestedOneWithoutUsersInput
@@ -7876,6 +7920,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
@@ -7944,6 +7989,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     department?: DepartmentUpdateOneWithoutUsersNestedInput
@@ -7966,6 +8012,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -8000,6 +8047,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
@@ -8021,6 +8069,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
@@ -8091,6 +8140,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
   }
 
   export type PatientCreateManyCreatedByInput = {
@@ -8187,6 +8237,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     department?: DepartmentUpdateOneWithoutUsersNestedInput
@@ -8208,6 +8259,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -8228,6 +8280,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PatientUpdateWithoutCreatedByInput = {
@@ -8321,6 +8374,7 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    expoPushToken?: string | null
   }
 
   export type UserUpdateWithoutDepartmentInput = {
@@ -8336,6 +8390,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
@@ -8357,6 +8412,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -8377,6 +8433,7 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

@@ -21,7 +21,7 @@ export const createPatient = asyncMiddleware(async (req: Request, res: Response)
       });
     }
     
-    const { name, dob, medicalRecord } = validationResult.data;
+    const { name, dob, roomNumber, medicalRecord } = validationResult.data;
     const dobDate = new Date(dob);
 
     // Create the patient
@@ -30,6 +30,7 @@ export const createPatient = asyncMiddleware(async (req: Request, res: Response)
         name,
         dob: dobDate,
         medicalRecord,
+        roomNumber,
         createdById: userId,
       },
     });

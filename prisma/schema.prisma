@@ -12,35 +12,35 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL") // FOR SUPABASE
+  // directUrl = env("DIRECT_URL") // FOR SUPABASE
 }
 
 model User {
-  id              String            @id @unique @default(cuid())
-  email           String            @unique
-  phoneNumber     String?           @unique
+  id              String      @id @unique @default(cuid())
+  email           String      @unique
+  phoneNumber     String?     @unique
   password        String
   firstName       String
   lastName        String
-  createdTasks    Task[]            @relation("CreatedTasks")
-  assignedTasks   Task[]            @relation("AssignedTasks")
-  department      Department?       @relation(fields: [departmentId], references: [id])
+  createdTasks    Task[]      @relation("CreatedTasks")
+  assignedTasks   Task[]      @relation("AssignedTasks")
+  department      Department? @relation(fields: [departmentId], references: [id])
   departmentId    String?
   profilePicture  String?
-  role            UserRole          @default(DOCTOR)
-  isApproved      Boolean           @default(false)
-  approvedBy      User?             @relation("ApprovedUsers", fields: [approvedById], references: [id])
+  role            UserRole    @default(DOCTOR)
+  isApproved      Boolean     @default(false)
+  approvedBy      User?       @relation("ApprovedUsers", fields: [approvedById], references: [id])
   approvedById    String?
-  approvedUsers   User[]            @relation("ApprovedUsers")
+  approvedUsers   User[]      @relation("ApprovedUsers")
   approvedAt      DateTime?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
- createdPatients Patient[]       @relation("CreatedPatients")
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  createdPatients Patient[]   @relation("CreatedPatients")
+  expoPushToken   String?      @unique
 
   @@index([email, role])
   @@index([isApproved])
 }
-
 
 enum UserRole {
   ADMIN
@@ -97,4 +97,3 @@ model Department {
   description String
   users       User[]
 }
-

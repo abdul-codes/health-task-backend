@@ -6,6 +6,36 @@ import { generateAccessToken, generateRefreshToken } from "../utils/generateJwt"
 import crypto from "crypto"
 import { UserRole } from "@/generated/prisma";
 
+// ... (keep existing imports and functions)
+
+// ADD THIS NEW FUNCTION
+export const getMe = asyncMiddleware(async (req: Request, res: Response) => {
+  // The `authenticateUser` middleware has already validated the token 
+  // and attached the user to the request object. If we've reached this
+  // point, the user is considered authenticated.
+
+  // We fetch the full user from the database to ensure the data is fresh.
+  const user = await prisma.user.findUnique({
+    where: { id: req.user!.id },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      role: true,
+     // isApproved: true,
+    }
+  });
+
+  if (!user) {
+    // This case is unlikely if authenticateUser passed, but it's good practice.
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json(user);
+});
+
+
 
 interface RegisterUserBody {
   email: string;
@@ -14,6 +44,8 @@ interface RegisterUserBody {
   password: string;
   role?: UserRole;
 }
+
+
 
 export const registerUser = asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -85,14 +117,6 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
     // Find user
     const user = await prisma.user.findUnique({
       where: { email: email },
-      include: {
-        approvedBy: {
-          select: {
-            firstName: true,
-            lastName: true
-          }
-        }
-      }
     });
 
     if (!user) {
@@ -102,11 +126,11 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
     }
 
     // Check if account is approved
-    if (!user.isApproved) {
-      return res.status(403).json({
-        message: 'Your account is pending approval by an administrator. Please try again later.'
-      });
-    }
+    // if (!user.isApproved) {
+    //   return res.status(403).json({
+    //     message: 'Your account is pending approval by an administrator. Please try again later.'
+    //   });
+    // }
     
     // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
@@ -118,17 +142,8 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
 
     // Generate tokens
     const accessToken = generateAccessToken(user.id, user.role);
-    const refreshToken = generateRefreshToken(user.id);
+    const refreshToken = generateRefreshToken(user.id)
 
-    // Set refresh token in HttpOnly cookie
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      sameSite: 'strict', // Prevent CSRF
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (match refresh token expiry if possible)
-    });
-
-    // Send response with user details and access token
     res.json({
       message: 'Login successful',
       user: {
@@ -137,11 +152,12 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
-        isApproved: user.isApproved,
-        approvedBy: user.approvedBy,
-        approvedAt: user.approvedAt
+        // isApproved: user.isApproved,
+        // approvedBy: user.approvedBy,
+        // approvedAt: user.approvedAt
       },
-      accessToken // Send only access token in the body
+      accessToken: accessToken, // Send only access token in the body
+      refreshToken: refreshToken
     });
   } catch (error) {
     console.error('Login error:', error);

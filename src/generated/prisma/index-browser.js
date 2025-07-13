@@ -131,7 +131,8 @@ exports.Prisma.UserScalarFieldEnum = {
   approvedById: 'approvedById',
   approvedAt: 'approvedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  expoPushToken: 'expoPushToken'
 };
 
 exports.Prisma.TaskScalarFieldEnum = {

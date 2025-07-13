@@ -5,7 +5,7 @@ import { prisma } from "../utils/db";
 import { UserRole } from "../generated/prisma";
 
 
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN as string;
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN_SECRET as string;
 
 
 declare global {

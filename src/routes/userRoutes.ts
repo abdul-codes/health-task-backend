@@ -7,7 +7,10 @@ import {
   deleteUserAccount,
   getPendingUsers,
   approveUser,
-  rejectUser
+  rejectUser,
+  getAllUsers,
+  getUsersForDropdown,
+  setPushToken
 } from "../controller/userController";
 import { validateUpdateProfile, validateUpdatePassword } from "../validation/userValidation";
 
@@ -15,6 +18,10 @@ const router = Router();
 
 // All routes require authentication
 router.use(authenticateUser);
+
+// Get all users route
+router.get("/", getAllUsers);
+router.get("/dropdown", getUsersForDropdown); // Get users for dropdown selection
 
 // User profile routes
 router.get("/userprofile", getUserProfile);
@@ -26,5 +33,9 @@ router.delete("/account", deleteUserAccount);
 router.get("/pending", getPendingUsers);
 router.put("/approve/:userId", approveUser);
 router.delete("/reject/:userId", rejectUser);
+
+
+// User routes for push token management
+router.post("/push-token", setPushToken);
 
 export default router;

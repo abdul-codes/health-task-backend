@@ -334,3 +334,247 @@ export const rejectUser = asyncMiddleware(async (req: Request, res: Response) =>
     });
   }
 });
+
+
+// Get all users (Admin only)
+export const getAllUsers = asyncMiddleware(async (req: Request, res: Response) => {
+  try {
+    // const adminId = req.user?.id;
+    // const adminRole = req.user?.role;
+
+    // if (!adminId || adminRole !== UserRole.ADMIN) {
+    //   return res.status(403).json({ message: "Forbidden: Admin access required" });
+    // }
+
+
+    // Get query parameters for filtering and pagination
+    const { 
+      page = 1, 
+      limit = 10, 
+      role, 
+      department, 
+      isApproved, 
+      search 
+    } = req.query;
+
+    const pageNumber = parseInt(page as string);
+    const limitNumber = parseInt(limit as string);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Build where clause for filtering
+    const where: any = {};
+
+    if (role) {
+      where.role = role;
+    }
+
+    if (department) {
+      where.department = {
+        contains: department as string,
+        mode: 'insensitive'
+      };
+    }
+
+    if (isApproved !== undefined) {
+      where.isApproved = isApproved === 'true';
+    }
+
+    if (search) {
+      where.OR = [
+        {
+          email: {
+            contains: search as string,
+            mode: 'insensitive'
+          }
+        },
+        {
+          firstName: {
+            contains: search as string,
+            mode: 'insensitive'
+          }
+        },
+        {
+          lastName: {
+            contains: search as string,
+            mode: 'insensitive'
+          }
+        }
+      ];
+    }
+
+    // Get total count for pagination
+    const totalUsers = await prisma.user.count({ where });
+
+    // Get users with pagination
+    const users = await prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        department: true,
+        profilePicture: true,
+        phoneNumber: true,
+        role: true,
+        isApproved: true,
+        createdAt: true,
+        updatedAt: true,
+        approvedAt: true,
+        approvedById: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      skip,
+      take: limitNumber
+    });
+
+    const totalPages = Math.ceil(totalUsers / limitNumber);
+
+    res.json({
+      users,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages,
+        totalUsers,
+        limit: limitNumber,
+        hasNextPage: pageNumber < totalPages,
+        hasPrevPage: pageNumber > 1
+      }
+    });
+  } catch (error) {
+    console.error("Get all users error:", error);
+    res.status(500).json({
+      message: "Error fetching users",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+
+// Get users for selection dropdowns (supports search)
+export const getUsersForSelection = asyncMiddleware(async (req: Request, res: Response) => {
+  try {
+    const { search } = req.query;
+
+    const where: any = {
+      // You might want a default filter, e.g., only show approved users
+      isApproved: true 
+    };
+
+    // If a search term is provided, filter users by it
+    if (search) {
+      where.OR = [
+        {
+          firstName: {
+            contains: search as string,
+            mode: 'insensitive' // Case-insensitive search
+          }
+        },
+        {
+          lastName: {
+            contains: search as string,
+            mode: 'insensitive'
+          }
+        },
+        {
+          email: {
+            contains: search as string,
+            mode: 'insensitive'
+          }
+        }
+      ];
+    }
+
+    const users = await prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+      },
+      orderBy: {
+        firstName: 'asc' // Sort alphabetically for a better user experience
+      },
+      take: 50 // Optional: Limit results to prevent excessively large responses
+    });
+
+    // To make it even easier for the mobile app, you can format the name here
+    const formattedUsers = users.map(user => ({
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`
+    }));
+
+    res.json(formattedUsers);
+
+  } catch (error) {
+    console.error("Error fetching users for selection:", error);
+    res.status(500).json({
+      message: "Error fetching users",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Simple endpoint for dropdown users
+export const getUsersForDropdown = asyncMiddleware(async (req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany({
+      // where: {
+      //   isApproved: true // Only approved users
+      // },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        // Optionally include email or department if needed for display
+      },
+      orderBy: {
+        firstName: 'asc'
+      }
+    });
+
+    // Format for dropdown (id, display name)
+    const dropdownUsers = users.map(user => ({
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`
+    }));
+
+    res.json({ users: dropdownUsers });
+  } catch (error) {
+    console.error("Get dropdown users error:", error);
+    res.status(500).json({
+      message: "Error fetching users for dropdown",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Add at the end of the file
+
+export const setPushToken = asyncMiddleware(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const { token } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Authentication required." });
+  }
+
+  if (!token || typeof token !== 'string') {
+    return res.status(400).json({ message: "A valid push token must be provided." });
+  }
+
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { expoPushToken: token },
+    });
+
+    res.status(200).json({ message: "Push token saved successfully." });
+
+  } catch (error) {
+    console.error("Error saving push token:", error);
+    res.status(500).json({ message: "An unexpected error occurred while saving the push token." });
+  }
+});

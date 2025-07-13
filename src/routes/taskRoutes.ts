@@ -23,6 +23,8 @@ router.use(authenticateUser);
 // Routes for all authenticated users
 router.get("/my-tasks", getMyTasks);
 router.get("/created-by-me", getTasksCreatedByMe);
+
+router.get("/", getAllTasks);
 router.get("/:id", getTaskById);
 
 // Routes for doctors, nurses, and admins
@@ -33,7 +35,5 @@ router.post("/:id/assign", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserR
 router.post("/:id/unassign", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), unassignTask);
 router.post("/:id/complete", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE, UserRole.LABTECH), completeTask);
 
-// Admin and doctor can view all tasks
-router.get("/", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR), getAllTasks);
 
 export default router;

@@ -4,29 +4,29 @@ import { TaskPriority, TaskStatus } from "../generated/prisma";
 // Schema for creating a task
 export const createTaskSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").max(100, "Title cannot exceed 100 characters"),
-  description: z.string().min(5, "Description must be at least 5 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"), // Fixed: Match frontend validation
   status: z.nativeEnum(TaskStatus).optional().default(TaskStatus.PENDING),
   priority: z.nativeEnum(TaskPriority).optional().default(TaskPriority.MEDIUM),
-  dueDate: z.string().refine((val) => {
+  dueDate: z.string().datetime("Invalid date format - must be ISO 8601").refine((val) => {
     const date = new Date(val);
-    return !isNaN(date.getTime());
-  }, "Invalid date format for due date"),
-  assignedToId: z.string().optional(),
-  patientId: z.string().optional(),
+    return !isNaN(date.getTime()) && date > new Date();
+  }, "Due date must be in the future"), // Fixed: Better date validation
+  assignedToId: z.string().uuid("Invalid user ID format").optional(),
+  patientId: z.string().uuid("Invalid patient ID format").optional(),
 });
 
 // Schema for updating a task
 export const updateTaskSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").max(100, "Title cannot exceed 100 characters").optional(),
-  description: z.string().min(5, "Description must be at least 5 characters").optional(),
+  description: z.string().min(10, "Description must be at least 10 characters").optional(), // Fixed: Match frontend validation
   status: z.nativeEnum(TaskStatus).optional(),
   priority: z.nativeEnum(TaskPriority).optional(),
-  dueDate: z.string().refine((val) => {
+  dueDate: z.string().datetime("Invalid date format - must be ISO 8601").refine((val) => {
     const date = new Date(val);
-    return !isNaN(date.getTime());
-  }, "Invalid date format for due date").optional(),
-  assignedToId: z.string().optional().nullable(),
-  patientId: z.string().optional().nullable(),
+    return !isNaN(date.getTime()) && date > new Date();
+  }, "Due date must be in the future").optional(), // Fixed: Better date validation
+  assignedToId: z.string().uuid("Invalid user ID format").optional().nullable(),
+  patientId: z.string().uuid("Invalid patient ID format").optional().nullable(),
 }).refine((data) => Object.keys(data).length > 0, {
   message: "At least one field must be provided for update",
 });
@@ -35,7 +35,7 @@ export const updateTaskSchema = z.object({
 export const assignTaskSchema = z.object({
   assignedToId: z.string({
     required_error: "User ID is required to assign the task",
-  }),
+  }).uuid("Invalid user ID format"), // Fixed: Add UUID validation
 });
 
 // Types derived from schemas

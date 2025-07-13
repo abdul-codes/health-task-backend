@@ -7,8 +7,8 @@ export const createPatientSchema = z.object({
     const date = new Date(val);
     return !isNaN(date.getTime());
   }, "Invalid date format for date of birth"),
+  roomNumber: z.string().min(1, "Room number is required"),
   medicalRecord: z.string().min(1, "Medical record is required"),
- // roomNumber: z.string().min(1, "Room number is required"),
 });
 
 // Schema for updating a patient

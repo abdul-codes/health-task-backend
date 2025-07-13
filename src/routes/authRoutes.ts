@@ -1,14 +1,16 @@
 import { Router } from "express";
 import { authenticateUser } from "../middleware/authMiddleware";
 import { refreshToken } from "../controller/jwtController";
-import { loginUser, logoutUser, registerUser } from "../controller/authController";
+import { getMe, loginUser, logoutUser, registerUser } from "../controller/authController";
 import { loginValidation, registervalidation, } from "../validation/authValidation";
 
 
 
 const router =  Router()
 
-router.post("/refresh", authenticateUser, refreshToken)
+router.get("/me", authenticateUser, getMe)
+
+router.post("/refresh", refreshToken)
 router.post("/register", registervalidation, registerUser)
 router.post("/login", loginValidation, loginUser)
 
