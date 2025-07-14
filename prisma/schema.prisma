@@ -16,27 +16,28 @@ datasource db {
 }
 
 model User {
-  id              String      @id @unique @default(cuid())
-  email           String      @unique
-  phoneNumber     String?     @unique
-  password        String
-  firstName       String
-  lastName        String
-  createdTasks    Task[]      @relation("CreatedTasks")
-  assignedTasks   Task[]      @relation("AssignedTasks")
-  department      Department? @relation(fields: [departmentId], references: [id])
-  departmentId    String?
-  profilePicture  String?
-  role            UserRole    @default(DOCTOR)
-  isApproved      Boolean     @default(false)
-  approvedBy      User?       @relation("ApprovedUsers", fields: [approvedById], references: [id])
-  approvedById    String?
-  approvedUsers   User[]      @relation("ApprovedUsers")
-  approvedAt      DateTime?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  createdPatients Patient[]   @relation("CreatedPatients")
-  expoPushToken   String?      @unique
+  id               String      @id @unique @default(cuid())
+  email            String      @unique
+  phoneNumber      String?     @unique
+  password         String
+  firstName        String
+  lastName         String
+  createdTasks     Task[]      @relation("CreatedTasks")
+  assignedTasks    Task[]      @relation("AssignedTasks")
+  department       Department? @relation(fields: [departmentId], references: [id])
+  departmentId     String?
+  profilePicture   String?
+  role             UserRole    @default(DOCTOR)
+  isApproved       Boolean     @default(false)
+  approvedBy       User?       @relation("ApprovedUsers", fields: [approvedById], references: [id])
+  approvedById     String?
+  approvedUsers    User[]      @relation("ApprovedUsers")
+  approvedAt       DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  createdPatients  Patient[]   @relation("CreatedPatients")
+  assignedPatients Patient[] // Patients this user is assigned to
+  expoPushToken    String?     @unique
 
   @@index([email, role])
   @@index([isApproved])
@@ -89,6 +90,7 @@ model Patient {
   createdBy     User?    @relation("CreatedPatients", fields: [createdById], references: [id])
   createdById   String
   tasks         Task[]
+  assignedTo    User[] // Users (doctors, nurses) assigned to this patient
 }
 
 model Department {

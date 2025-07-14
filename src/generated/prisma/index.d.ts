@@ -1151,6 +1151,7 @@ export namespace Prisma {
     assignedTasks: number
     approvedUsers: number
     createdPatients: number
+    assignedPatients: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1158,6 +1159,7 @@ export namespace Prisma {
     assignedTasks?: boolean | UserCountOutputTypeCountAssignedTasksArgs
     approvedUsers?: boolean | UserCountOutputTypeCountApprovedUsersArgs
     createdPatients?: boolean | UserCountOutputTypeCountCreatedPatientsArgs
+    assignedPatients?: boolean | UserCountOutputTypeCountAssignedPatientsArgs
   }
 
   // Custom InputTypes
@@ -1199,6 +1201,13 @@ export namespace Prisma {
     where?: PatientWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAssignedPatientsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PatientWhereInput
+  }
+
 
   /**
    * Count Type PatientCountOutputType
@@ -1206,10 +1215,12 @@ export namespace Prisma {
 
   export type PatientCountOutputType = {
     tasks: number
+    assignedTo: number
   }
 
   export type PatientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tasks?: boolean | PatientCountOutputTypeCountTasksArgs
+    assignedTo?: boolean | PatientCountOutputTypeCountAssignedToArgs
   }
 
   // Custom InputTypes
@@ -1228,6 +1239,13 @@ export namespace Prisma {
    */
   export type PatientCountOutputTypeCountTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TaskWhereInput
+  }
+
+  /**
+   * PatientCountOutputType without action
+   */
+  export type PatientCountOutputTypeCountAssignedToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
 
@@ -1516,6 +1534,7 @@ export namespace Prisma {
     approvedBy?: boolean | User$approvedByArgs<ExtArgs>
     approvedUsers?: boolean | User$approvedUsersArgs<ExtArgs>
     createdPatients?: boolean | User$createdPatientsArgs<ExtArgs>
+    assignedPatients?: boolean | User$assignedPatientsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1564,6 +1583,7 @@ export namespace Prisma {
     approvedBy?: boolean | User$approvedByArgs<ExtArgs>
     approvedUsers?: boolean | User$approvedUsersArgs<ExtArgs>
     createdPatients?: boolean | User$createdPatientsArgs<ExtArgs>
+    assignedPatients?: boolean | User$assignedPatientsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1580,6 +1600,7 @@ export namespace Prisma {
       approvedBy: Prisma.$UserPayload<ExtArgs> | null
       approvedUsers: Prisma.$UserPayload<ExtArgs>[]
       createdPatients: Prisma.$PatientPayload<ExtArgs>[]
+      assignedPatients: Prisma.$PatientPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1967,6 +1988,7 @@ export namespace Prisma {
     approvedBy<T extends User$approvedByArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     approvedUsers<T extends User$approvedUsersArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany"> | Null>
     createdPatients<T extends User$createdPatientsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdPatientsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PatientPayload<ExtArgs>, T, "findMany"> | Null>
+    assignedPatients<T extends User$assignedPatientsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedPatientsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PatientPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2422,6 +2444,26 @@ export namespace Prisma {
    * User.createdPatients
    */
   export type User$createdPatientsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Patient
+     */
+    select?: PatientSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PatientInclude<ExtArgs> | null
+    where?: PatientWhereInput
+    orderBy?: PatientOrderByWithRelationInput | PatientOrderByWithRelationInput[]
+    cursor?: PatientWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PatientScalarFieldEnum | PatientScalarFieldEnum[]
+  }
+
+  /**
+   * User.assignedPatients
+   */
+  export type User$assignedPatientsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Patient
      */
@@ -3670,6 +3712,7 @@ export namespace Prisma {
     createdById?: boolean
     createdBy?: boolean | Patient$createdByArgs<ExtArgs>
     tasks?: boolean | Patient$tasksArgs<ExtArgs>
+    assignedTo?: boolean | Patient$assignedToArgs<ExtArgs>
     _count?: boolean | PatientCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["patient"]>
 
@@ -3697,6 +3740,7 @@ export namespace Prisma {
   export type PatientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | Patient$createdByArgs<ExtArgs>
     tasks?: boolean | Patient$tasksArgs<ExtArgs>
+    assignedTo?: boolean | Patient$assignedToArgs<ExtArgs>
     _count?: boolean | PatientCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PatientIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3708,6 +3752,7 @@ export namespace Prisma {
     objects: {
       createdBy: Prisma.$UserPayload<ExtArgs> | null
       tasks: Prisma.$TaskPayload<ExtArgs>[]
+      assignedTo: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4083,6 +4128,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     createdBy<T extends Patient$createdByArgs<ExtArgs> = {}>(args?: Subset<T, Patient$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     tasks<T extends Patient$tasksArgs<ExtArgs> = {}>(args?: Subset<T, Patient$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany"> | Null>
+    assignedTo<T extends Patient$assignedToArgs<ExtArgs> = {}>(args?: Subset<T, Patient$assignedToArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4469,6 +4515,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * Patient.assignedTo
+   */
+  export type Patient$assignedToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -5631,6 +5697,7 @@ export namespace Prisma {
     approvedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     approvedUsers?: UserListRelationFilter
     createdPatients?: PatientListRelationFilter
+    assignedPatients?: PatientListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -5655,6 +5722,7 @@ export namespace Prisma {
     approvedBy?: UserOrderByWithRelationInput
     approvedUsers?: UserOrderByRelationAggregateInput
     createdPatients?: PatientOrderByRelationAggregateInput
+    assignedPatients?: PatientOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -5682,6 +5750,7 @@ export namespace Prisma {
     approvedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     approvedUsers?: UserListRelationFilter
     createdPatients?: PatientListRelationFilter
+    assignedPatients?: PatientListRelationFilter
   }, "id" | "id" | "email" | "phoneNumber" | "expoPushToken">
 
   export type UserOrderByWithAggregationInput = {
@@ -5825,6 +5894,7 @@ export namespace Prisma {
     createdById?: StringFilter<"Patient"> | string
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     tasks?: TaskListRelationFilter
+    assignedTo?: UserListRelationFilter
   }
 
   export type PatientOrderByWithRelationInput = {
@@ -5837,6 +5907,7 @@ export namespace Prisma {
     createdById?: SortOrder
     createdBy?: UserOrderByWithRelationInput
     tasks?: TaskOrderByRelationAggregateInput
+    assignedTo?: UserOrderByRelationAggregateInput
   }
 
   export type PatientWhereUniqueInput = Prisma.AtLeast<{
@@ -5852,6 +5923,7 @@ export namespace Prisma {
     createdById?: StringFilter<"Patient"> | string
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     tasks?: TaskListRelationFilter
+    assignedTo?: UserListRelationFilter
   }, "id">
 
   export type PatientOrderByWithAggregationInput = {
@@ -5945,6 +6017,7 @@ export namespace Prisma {
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -5967,6 +6040,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientUncheckedCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUpdateInput = {
@@ -5989,6 +6063,7 @@ export namespace Prisma {
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6011,6 +6086,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUncheckedUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6162,6 +6238,7 @@ export namespace Prisma {
     createdAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedPatientsInput
     tasks?: TaskCreateNestedManyWithoutPatientInput
+    assignedTo?: UserCreateNestedManyWithoutAssignedPatientsInput
   }
 
   export type PatientUncheckedCreateInput = {
@@ -6173,6 +6250,7 @@ export namespace Prisma {
     createdAt?: Date | string
     createdById: string
     tasks?: TaskUncheckedCreateNestedManyWithoutPatientInput
+    assignedTo?: UserUncheckedCreateNestedManyWithoutAssignedPatientsInput
   }
 
   export type PatientUpdateInput = {
@@ -6184,6 +6262,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedPatientsNestedInput
     tasks?: TaskUpdateManyWithoutPatientNestedInput
+    assignedTo?: UserUpdateManyWithoutAssignedPatientsNestedInput
   }
 
   export type PatientUncheckedUpdateInput = {
@@ -6195,6 +6274,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
     tasks?: TaskUncheckedUpdateManyWithoutPatientNestedInput
+    assignedTo?: UserUncheckedUpdateManyWithoutAssignedPatientsNestedInput
   }
 
   export type PatientCreateManyInput = {
@@ -6688,6 +6768,12 @@ export namespace Prisma {
     connect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
   }
 
+  export type PatientCreateNestedManyWithoutAssignedToInput = {
+    create?: XOR<PatientCreateWithoutAssignedToInput, PatientUncheckedCreateWithoutAssignedToInput> | PatientCreateWithoutAssignedToInput[] | PatientUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: PatientCreateOrConnectWithoutAssignedToInput | PatientCreateOrConnectWithoutAssignedToInput[]
+    connect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+  }
+
   export type TaskUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput> | TaskCreateWithoutCreatedByInput[] | TaskUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutCreatedByInput | TaskCreateOrConnectWithoutCreatedByInput[]
@@ -6713,6 +6799,12 @@ export namespace Prisma {
     create?: XOR<PatientCreateWithoutCreatedByInput, PatientUncheckedCreateWithoutCreatedByInput> | PatientCreateWithoutCreatedByInput[] | PatientUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PatientCreateOrConnectWithoutCreatedByInput | PatientCreateOrConnectWithoutCreatedByInput[]
     createMany?: PatientCreateManyCreatedByInputEnvelope
+    connect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+  }
+
+  export type PatientUncheckedCreateNestedManyWithoutAssignedToInput = {
+    create?: XOR<PatientCreateWithoutAssignedToInput, PatientUncheckedCreateWithoutAssignedToInput> | PatientCreateWithoutAssignedToInput[] | PatientUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: PatientCreateOrConnectWithoutAssignedToInput | PatientCreateOrConnectWithoutAssignedToInput[]
     connect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
   }
 
@@ -6816,6 +6908,19 @@ export namespace Prisma {
     deleteMany?: PatientScalarWhereInput | PatientScalarWhereInput[]
   }
 
+  export type PatientUpdateManyWithoutAssignedToNestedInput = {
+    create?: XOR<PatientCreateWithoutAssignedToInput, PatientUncheckedCreateWithoutAssignedToInput> | PatientCreateWithoutAssignedToInput[] | PatientUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: PatientCreateOrConnectWithoutAssignedToInput | PatientCreateOrConnectWithoutAssignedToInput[]
+    upsert?: PatientUpsertWithWhereUniqueWithoutAssignedToInput | PatientUpsertWithWhereUniqueWithoutAssignedToInput[]
+    set?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    disconnect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    delete?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    connect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    update?: PatientUpdateWithWhereUniqueWithoutAssignedToInput | PatientUpdateWithWhereUniqueWithoutAssignedToInput[]
+    updateMany?: PatientUpdateManyWithWhereWithoutAssignedToInput | PatientUpdateManyWithWhereWithoutAssignedToInput[]
+    deleteMany?: PatientScalarWhereInput | PatientScalarWhereInput[]
+  }
+
   export type TaskUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<TaskCreateWithoutCreatedByInput, TaskUncheckedCreateWithoutCreatedByInput> | TaskCreateWithoutCreatedByInput[] | TaskUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutCreatedByInput | TaskCreateOrConnectWithoutCreatedByInput[]
@@ -6869,6 +6974,19 @@ export namespace Prisma {
     connect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
     update?: PatientUpdateWithWhereUniqueWithoutCreatedByInput | PatientUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: PatientUpdateManyWithWhereWithoutCreatedByInput | PatientUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: PatientScalarWhereInput | PatientScalarWhereInput[]
+  }
+
+  export type PatientUncheckedUpdateManyWithoutAssignedToNestedInput = {
+    create?: XOR<PatientCreateWithoutAssignedToInput, PatientUncheckedCreateWithoutAssignedToInput> | PatientCreateWithoutAssignedToInput[] | PatientUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: PatientCreateOrConnectWithoutAssignedToInput | PatientCreateOrConnectWithoutAssignedToInput[]
+    upsert?: PatientUpsertWithWhereUniqueWithoutAssignedToInput | PatientUpsertWithWhereUniqueWithoutAssignedToInput[]
+    set?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    disconnect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    delete?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    connect?: PatientWhereUniqueInput | PatientWhereUniqueInput[]
+    update?: PatientUpdateWithWhereUniqueWithoutAssignedToInput | PatientUpdateWithWhereUniqueWithoutAssignedToInput[]
+    updateMany?: PatientUpdateManyWithWhereWithoutAssignedToInput | PatientUpdateManyWithWhereWithoutAssignedToInput[]
     deleteMany?: PatientScalarWhereInput | PatientScalarWhereInput[]
   }
 
@@ -6939,11 +7057,23 @@ export namespace Prisma {
     connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
   }
 
+  export type UserCreateNestedManyWithoutAssignedPatientsInput = {
+    create?: XOR<UserCreateWithoutAssignedPatientsInput, UserUncheckedCreateWithoutAssignedPatientsInput> | UserCreateWithoutAssignedPatientsInput[] | UserUncheckedCreateWithoutAssignedPatientsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedPatientsInput | UserCreateOrConnectWithoutAssignedPatientsInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
   export type TaskUncheckedCreateNestedManyWithoutPatientInput = {
     create?: XOR<TaskCreateWithoutPatientInput, TaskUncheckedCreateWithoutPatientInput> | TaskCreateWithoutPatientInput[] | TaskUncheckedCreateWithoutPatientInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutPatientInput | TaskCreateOrConnectWithoutPatientInput[]
     createMany?: TaskCreateManyPatientInputEnvelope
     connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutAssignedPatientsInput = {
+    create?: XOR<UserCreateWithoutAssignedPatientsInput, UserUncheckedCreateWithoutAssignedPatientsInput> | UserCreateWithoutAssignedPatientsInput[] | UserUncheckedCreateWithoutAssignedPatientsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedPatientsInput | UserCreateOrConnectWithoutAssignedPatientsInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type UserUpdateOneWithoutCreatedPatientsNestedInput = {
@@ -6970,6 +7100,19 @@ export namespace Prisma {
     deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
   }
 
+  export type UserUpdateManyWithoutAssignedPatientsNestedInput = {
+    create?: XOR<UserCreateWithoutAssignedPatientsInput, UserUncheckedCreateWithoutAssignedPatientsInput> | UserCreateWithoutAssignedPatientsInput[] | UserUncheckedCreateWithoutAssignedPatientsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedPatientsInput | UserCreateOrConnectWithoutAssignedPatientsInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutAssignedPatientsInput | UserUpsertWithWhereUniqueWithoutAssignedPatientsInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutAssignedPatientsInput | UserUpdateWithWhereUniqueWithoutAssignedPatientsInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutAssignedPatientsInput | UserUpdateManyWithWhereWithoutAssignedPatientsInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
   export type TaskUncheckedUpdateManyWithoutPatientNestedInput = {
     create?: XOR<TaskCreateWithoutPatientInput, TaskUncheckedCreateWithoutPatientInput> | TaskCreateWithoutPatientInput[] | TaskUncheckedCreateWithoutPatientInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutPatientInput | TaskCreateOrConnectWithoutPatientInput[]
@@ -6982,6 +7125,19 @@ export namespace Prisma {
     update?: TaskUpdateWithWhereUniqueWithoutPatientInput | TaskUpdateWithWhereUniqueWithoutPatientInput[]
     updateMany?: TaskUpdateManyWithWhereWithoutPatientInput | TaskUpdateManyWithWhereWithoutPatientInput[]
     deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutAssignedPatientsNestedInput = {
+    create?: XOR<UserCreateWithoutAssignedPatientsInput, UserUncheckedCreateWithoutAssignedPatientsInput> | UserCreateWithoutAssignedPatientsInput[] | UserUncheckedCreateWithoutAssignedPatientsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedPatientsInput | UserCreateOrConnectWithoutAssignedPatientsInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutAssignedPatientsInput | UserUpsertWithWhereUniqueWithoutAssignedPatientsInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutAssignedPatientsInput | UserUpdateWithWhereUniqueWithoutAssignedPatientsInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutAssignedPatientsInput | UserUpdateManyWithWhereWithoutAssignedPatientsInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type UserCreateNestedManyWithoutDepartmentInput = {
@@ -7328,6 +7484,7 @@ export namespace Prisma {
     department?: DepartmentCreateNestedOneWithoutUsersInput
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
     createdPatients?: PatientCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUncheckedCreateWithoutApprovedUsersInput = {
@@ -7349,6 +7506,7 @@ export namespace Prisma {
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientUncheckedCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserCreateOrConnectWithoutApprovedUsersInput = {
@@ -7375,6 +7533,7 @@ export namespace Prisma {
     department?: DepartmentCreateNestedOneWithoutUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUncheckedCreateWithoutApprovedByInput = {
@@ -7396,6 +7555,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientUncheckedCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserCreateOrConnectWithoutApprovedByInput = {
@@ -7416,6 +7576,7 @@ export namespace Prisma {
     medicalRecord: string
     createdAt?: Date | string
     tasks?: TaskCreateNestedManyWithoutPatientInput
+    assignedTo?: UserCreateNestedManyWithoutAssignedPatientsInput
   }
 
   export type PatientUncheckedCreateWithoutCreatedByInput = {
@@ -7426,6 +7587,7 @@ export namespace Prisma {
     medicalRecord: string
     createdAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutPatientInput
+    assignedTo?: UserUncheckedCreateNestedManyWithoutAssignedPatientsInput
   }
 
   export type PatientCreateOrConnectWithoutCreatedByInput = {
@@ -7436,6 +7598,33 @@ export namespace Prisma {
   export type PatientCreateManyCreatedByInputEnvelope = {
     data: PatientCreateManyCreatedByInput | PatientCreateManyCreatedByInput[]
     skipDuplicates?: boolean
+  }
+
+  export type PatientCreateWithoutAssignedToInput = {
+    id?: string
+    name: string
+    dob: Date | string
+    roomNumber?: string | null
+    medicalRecord: string
+    createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutCreatedPatientsInput
+    tasks?: TaskCreateNestedManyWithoutPatientInput
+  }
+
+  export type PatientUncheckedCreateWithoutAssignedToInput = {
+    id?: string
+    name: string
+    dob: Date | string
+    roomNumber?: string | null
+    medicalRecord: string
+    createdAt?: Date | string
+    createdById: string
+    tasks?: TaskUncheckedCreateNestedManyWithoutPatientInput
+  }
+
+  export type PatientCreateOrConnectWithoutAssignedToInput = {
+    where: PatientWhereUniqueInput
+    create: XOR<PatientCreateWithoutAssignedToInput, PatientUncheckedCreateWithoutAssignedToInput>
   }
 
   export type TaskUpsertWithWhereUniqueWithoutCreatedByInput = {
@@ -7539,6 +7728,7 @@ export namespace Prisma {
     department?: DepartmentUpdateOneWithoutUsersNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
     createdPatients?: PatientUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedUsersInput = {
@@ -7560,6 +7750,7 @@ export namespace Prisma {
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUncheckedUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutApprovedByInput = {
@@ -7628,6 +7819,22 @@ export namespace Prisma {
     createdById?: StringFilter<"Patient"> | string
   }
 
+  export type PatientUpsertWithWhereUniqueWithoutAssignedToInput = {
+    where: PatientWhereUniqueInput
+    update: XOR<PatientUpdateWithoutAssignedToInput, PatientUncheckedUpdateWithoutAssignedToInput>
+    create: XOR<PatientCreateWithoutAssignedToInput, PatientUncheckedCreateWithoutAssignedToInput>
+  }
+
+  export type PatientUpdateWithWhereUniqueWithoutAssignedToInput = {
+    where: PatientWhereUniqueInput
+    data: XOR<PatientUpdateWithoutAssignedToInput, PatientUncheckedUpdateWithoutAssignedToInput>
+  }
+
+  export type PatientUpdateManyWithWhereWithoutAssignedToInput = {
+    where: PatientScalarWhereInput
+    data: XOR<PatientUpdateManyMutationInput, PatientUncheckedUpdateManyWithoutAssignedToInput>
+  }
+
   export type UserCreateWithoutCreatedTasksInput = {
     id?: string
     email: string
@@ -7647,6 +7854,7 @@ export namespace Prisma {
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUncheckedCreateWithoutCreatedTasksInput = {
@@ -7668,6 +7876,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientUncheckedCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserCreateOrConnectWithoutCreatedTasksInput = {
@@ -7694,6 +7903,7 @@ export namespace Prisma {
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUncheckedCreateWithoutAssignedTasksInput = {
@@ -7715,6 +7925,7 @@ export namespace Prisma {
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientUncheckedCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserCreateOrConnectWithoutAssignedTasksInput = {
@@ -7730,6 +7941,7 @@ export namespace Prisma {
     medicalRecord: string
     createdAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedPatientsInput
+    assignedTo?: UserCreateNestedManyWithoutAssignedPatientsInput
   }
 
   export type PatientUncheckedCreateWithoutTasksInput = {
@@ -7740,6 +7952,7 @@ export namespace Prisma {
     medicalRecord: string
     createdAt?: Date | string
     createdById: string
+    assignedTo?: UserUncheckedCreateNestedManyWithoutAssignedPatientsInput
   }
 
   export type PatientCreateOrConnectWithoutTasksInput = {
@@ -7777,6 +7990,7 @@ export namespace Prisma {
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedTasksInput = {
@@ -7798,6 +8012,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUncheckedUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUpsertWithoutAssignedTasksInput = {
@@ -7830,6 +8045,7 @@ export namespace Prisma {
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedTasksInput = {
@@ -7851,6 +8067,7 @@ export namespace Prisma {
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUncheckedUpdateManyWithoutAssignedToNestedInput
   }
 
   export type PatientUpsertWithoutTasksInput = {
@@ -7872,6 +8089,7 @@ export namespace Prisma {
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedPatientsNestedInput
+    assignedTo?: UserUpdateManyWithoutAssignedPatientsNestedInput
   }
 
   export type PatientUncheckedUpdateWithoutTasksInput = {
@@ -7882,6 +8100,7 @@ export namespace Prisma {
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
+    assignedTo?: UserUncheckedUpdateManyWithoutAssignedPatientsNestedInput
   }
 
   export type UserCreateWithoutCreatedPatientsInput = {
@@ -7903,6 +8122,7 @@ export namespace Prisma {
     department?: DepartmentCreateNestedOneWithoutUsersInput
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByInput
+    assignedPatients?: PatientCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUncheckedCreateWithoutCreatedPatientsInput = {
@@ -7924,6 +8144,7 @@ export namespace Prisma {
     createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
+    assignedPatients?: PatientUncheckedCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserCreateOrConnectWithoutCreatedPatientsInput = {
@@ -7965,6 +8186,55 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserCreateWithoutAssignedPatientsInput = {
+    id?: string
+    email: string
+    phoneNumber?: string | null
+    password: string
+    firstName: string
+    lastName: string
+    profilePicture?: string | null
+    role?: $Enums.UserRole
+    isApproved?: boolean
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    expoPushToken?: string | null
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    department?: DepartmentCreateNestedOneWithoutUsersInput
+    approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
+    approvedUsers?: UserCreateNestedManyWithoutApprovedByInput
+    createdPatients?: PatientCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAssignedPatientsInput = {
+    id?: string
+    email: string
+    phoneNumber?: string | null
+    password: string
+    firstName: string
+    lastName: string
+    departmentId?: string | null
+    profilePicture?: string | null
+    role?: $Enums.UserRole
+    isApproved?: boolean
+    approvedById?: string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    expoPushToken?: string | null
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
+    createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAssignedPatientsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAssignedPatientsInput, UserUncheckedCreateWithoutAssignedPatientsInput>
+  }
+
   export type UserUpsertWithoutCreatedPatientsInput = {
     update: XOR<UserUpdateWithoutCreatedPatientsInput, UserUncheckedUpdateWithoutCreatedPatientsInput>
     create: XOR<UserCreateWithoutCreatedPatientsInput, UserUncheckedCreateWithoutCreatedPatientsInput>
@@ -7995,6 +8265,7 @@ export namespace Prisma {
     department?: DepartmentUpdateOneWithoutUsersNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByNestedInput
+    assignedPatients?: PatientUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedPatientsInput = {
@@ -8016,6 +8287,7 @@ export namespace Prisma {
     createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
+    assignedPatients?: PatientUncheckedUpdateManyWithoutAssignedToNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutPatientInput = {
@@ -8032,6 +8304,22 @@ export namespace Prisma {
   export type TaskUpdateManyWithWhereWithoutPatientInput = {
     where: TaskScalarWhereInput
     data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutPatientInput>
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutAssignedPatientsInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutAssignedPatientsInput, UserUncheckedUpdateWithoutAssignedPatientsInput>
+    create: XOR<UserCreateWithoutAssignedPatientsInput, UserUncheckedCreateWithoutAssignedPatientsInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutAssignedPatientsInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutAssignedPatientsInput, UserUncheckedUpdateWithoutAssignedPatientsInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutAssignedPatientsInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutAssignedPatientsInput>
   }
 
   export type UserCreateWithoutDepartmentInput = {
@@ -8053,6 +8341,7 @@ export namespace Prisma {
     approvedBy?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserUncheckedCreateWithoutDepartmentInput = {
@@ -8074,6 +8363,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByInput
     createdPatients?: PatientUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedPatients?: PatientUncheckedCreateNestedManyWithoutAssignedToInput
   }
 
   export type UserCreateOrConnectWithoutDepartmentInput = {
@@ -8243,6 +8533,7 @@ export namespace Prisma {
     department?: DepartmentUpdateOneWithoutUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedByInput = {
@@ -8264,6 +8555,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUncheckedUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutApprovedByInput = {
@@ -8291,6 +8583,7 @@ export namespace Prisma {
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUpdateManyWithoutPatientNestedInput
+    assignedTo?: UserUpdateManyWithoutAssignedPatientsNestedInput
   }
 
   export type PatientUncheckedUpdateWithoutCreatedByInput = {
@@ -8301,6 +8594,7 @@ export namespace Prisma {
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutPatientNestedInput
+    assignedTo?: UserUncheckedUpdateManyWithoutAssignedPatientsNestedInput
   }
 
   export type PatientUncheckedUpdateManyWithoutCreatedByInput = {
@@ -8310,6 +8604,38 @@ export namespace Prisma {
     roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
     medicalRecord?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PatientUpdateWithoutAssignedToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    medicalRecord?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutCreatedPatientsNestedInput
+    tasks?: TaskUpdateManyWithoutPatientNestedInput
+  }
+
+  export type PatientUncheckedUpdateWithoutAssignedToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    medicalRecord?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    tasks?: TaskUncheckedUpdateManyWithoutPatientNestedInput
+  }
+
+  export type PatientUncheckedUpdateManyWithoutAssignedToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    dob?: DateTimeFieldUpdateOperationsInput | Date | string
+    roomNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    medicalRecord?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: StringFieldUpdateOperationsInput | string
   }
 
   export type TaskCreateManyPatientInput = {
@@ -8360,6 +8686,68 @@ export namespace Prisma {
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type UserUpdateWithoutAssignedPatientsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    department?: DepartmentUpdateOneWithoutUsersNestedInput
+    approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
+    approvedUsers?: UserUpdateManyWithoutApprovedByNestedInput
+    createdPatients?: PatientUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAssignedPatientsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
+    createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutAssignedPatientsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expoPushToken?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type UserCreateManyDepartmentInput = {
     id?: string
     email: string
@@ -8396,6 +8784,7 @@ export namespace Prisma {
     approvedBy?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDepartmentInput = {
@@ -8417,6 +8806,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByNestedInput
     createdPatients?: PatientUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedPatients?: PatientUncheckedUpdateManyWithoutAssignedToNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutDepartmentInput = {
