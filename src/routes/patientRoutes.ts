@@ -6,6 +6,7 @@ import {
   getPatientById,
   updatePatient,
   deletePatient,
+  getPatientsForDropdown,
 } from "../controller/patientController";
 
 const router = express.Router();
@@ -14,10 +15,12 @@ const router = express.Router();
 router.use(authenticateUser);
 
 // Create patient - Admin only
-router.post("/", authorizeAdmin, createPatient);
+router.post("/", authenticateUser, createPatient);
 
 // Get all patients
 router.get("/", authenticateUser, getAllPatients);
+
+router.get("/dropdown", authenticateUser, getPatientsForDropdown);
 
 // Get patient by ID
 router.get("/:id", authenticateUser, getPatientById);

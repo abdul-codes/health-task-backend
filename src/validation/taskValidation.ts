@@ -11,8 +11,8 @@ export const createTaskSchema = z.object({
     const date = new Date(val);
     return !isNaN(date.getTime()) && date > new Date();
   }, "Due date must be in the future"), // Fixed: Better date validation
-  assignedToId: z.string().uuid("Invalid user ID format").optional(),
-  patientId: z.string().uuid("Invalid patient ID format").optional(),
+  assignedToId: z.string().cuid("Invalid user ID format").optional(),
+  patientId: z.string().cuid("Invalid patient ID format").optional(),
 });
 
 // Schema for updating a task
@@ -25,8 +25,8 @@ export const updateTaskSchema = z.object({
     const date = new Date(val);
     return !isNaN(date.getTime()) && date > new Date();
   }, "Due date must be in the future").optional(), // Fixed: Better date validation
-  assignedToId: z.string().uuid("Invalid user ID format").optional().nullable(),
-  patientId: z.string().uuid("Invalid patient ID format").optional().nullable(),
+  assignedToId: z.string().cuid("Invalid user ID format").optional().nullable(),
+  patientId: z.string().cuid("Invalid patient ID format").optional().nullable(),
 }).refine((data) => Object.keys(data).length > 0, {
   message: "At least one field must be provided for update",
 });

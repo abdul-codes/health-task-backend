@@ -103,6 +103,36 @@ export const createPatient = asyncMiddleware(
    }
  });
 
+ // Add this new function to your patientController.ts
+ 
+ /**
+  * Get all patients for selection dropdowns.
+  * GET /api/patients/dropdown
+  */
+ export const getPatientsForDropdown = asyncMiddleware(async (req: Request, res: Response) => {
+   try {
+     const patients = await prisma.patient.findMany({
+       select: {
+         id: true,
+         name: true,
+         roomNumber: true, // Including room number can be helpful for selection
+       },
+       orderBy: {
+         name: 'asc' // Sort alphabetically for a better user experience
+       }
+     });
+ 
+     res.json(patients); // Send the direct array of patients
+ 
+   } catch (error) {
+     console.error("Error fetching patients for dropdown:", error);
+     res.status(500).json({
+       message: "Error fetching patients",
+       error: error instanceof Error ? error.message : "Unknown error",
+     });
+   }
+ });
+
 
 /**
  * Get patient by ID

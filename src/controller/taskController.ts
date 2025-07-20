@@ -103,28 +103,28 @@ export const createTask = asyncMiddleware(
       });
 
       // Web Socket Event
-      try {
-        const io = getIO();
-        // Notify the user who the task is assigned to
-        // No user will be in the list more than once.
-        const recipientIds = new Set<string>();
+      // try {
+      //   const io = getIO();
+      //   // Notify the user who the task is assigned to
+      //   // No user will be in the list more than once.
+      //   const recipientIds = new Set<string>();
 
-        if (task.createdBy?.id) {
-          recipientIds.add(task.createdBy.id);
-        }
+      //   if (task.createdBy?.id) {
+      //     recipientIds.add(task.createdBy.id);
+      //   }
 
-        if (task.assignedTo?.id) {
-          recipientIds.add(task.assignedTo.id);
-        }
+      //   if (task.assignedTo?.id) {
+      //     recipientIds.add(task.assignedTo.id);
+      //   }
 
-        if (recipientIds.size > 0) {
-          io.to([...recipientIds]).emit("taskCreated", task);
-        }
-      } catch (error) {
-        console.error("Socket.IO emission failed:", error);
-        // Decide if you want to do anything else if sockets fail.
-        // The main HTTP response will still succeed.
-      }
+      //   if (recipientIds.size > 0) {
+      //     io.to([...recipientIds]).emit("taskCreated", task);
+      //   }
+      // } catch (error) {
+      //   console.error("Socket.IO emission failed:", error);
+      //   // Decide if you want to do anything else if sockets fail.
+      //   // The main HTTP response will still succeed.
+      // }
       // Websocket ends
       // Push Notification
       if (task.assignedTo && task.assignedTo.expoPushToken) {

@@ -34,22 +34,23 @@ app.get("/api/test", async (req: Request, res: Response) => {
 });
 
 // --- Socket.IO Connection Logic ---
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+// io.on("connection", (socket) => {
+//   console.log("A user connected:", socket.id);
 
-  // This logic allows a user to join a "room" based on their userId
-  // so you can send them targeted notifications.
-  socket.on("joinRoom", (userId) => {
-    socket.join(userId);
-    console.log(`User ${socket.id} joined room ${userId}`);
-  });
+//   // This logic allows a user to join a "room" based on their userId
+//   // so you can send them targeted notifications.
+//   socket.on("joinRoom", (userId) => {
+//     socket.join(userId);
+//     console.log(`User ${socket.id} joined room ${userId}`);
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected:", socket.id);
+//   });
+// });
 
+// use server.listen for socketio
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log("Server running on localhost:8000");
 });

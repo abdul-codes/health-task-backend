@@ -528,6 +528,7 @@ export const getUsersForDropdown = asyncMiddleware(async (req: Request, res: Res
         id: true,
         firstName: true,
         lastName: true,
+        role: true,
         // Optionally include email or department if needed for display
       },
       orderBy: {
@@ -541,7 +542,8 @@ export const getUsersForDropdown = asyncMiddleware(async (req: Request, res: Res
       name: `${user.firstName} ${user.lastName}`
     }));
 
-    res.json({ users: dropdownUsers });
+    //res.json({ users: dropdownUsers });
+    res.json(users)
   } catch (error) {
     console.error("Get dropdown users error:", error);
     res.status(500).json({
