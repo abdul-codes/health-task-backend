@@ -71,11 +71,12 @@ export const createPatient = asyncMiddleware(
      // A query parameter could be added for admins to fetch all patients, e.g., ?all=true
      const patients = await prisma.patient.findMany({
        where: {
-         assignedTo: {
-           some: {
-             id: userId,
+         OR: [
+           { createdById: userId },
+           {
+             assignedTo: { some: { id: userId } },
            },
-         },
+         ],
        },
        include: {
          createdBy: {

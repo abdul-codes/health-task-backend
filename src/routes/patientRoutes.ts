@@ -14,7 +14,7 @@ const router = express.Router();
 // All patient routes require authentication
 router.use(authenticateUser);
 
-// Create patient - Admin only
+// Create patient -
 router.post("/", authenticateUser, createPatient);
 
 // Get all patients
@@ -25,7 +25,7 @@ router.get("/dropdown", authenticateUser, getPatientsForDropdown);
 // Get patient by ID
 router.get("/:id", authenticateUser, getPatientById);
 
-// Update patient - Admin only
+// Update patient -
 router.put("/:id", authenticateUser, authorizeAdmin, updatePatient);
 
 // Delete patient - Admin only
