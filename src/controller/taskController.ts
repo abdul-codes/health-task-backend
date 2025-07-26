@@ -5,12 +5,12 @@ import {
   createTaskSchema,
   updateTaskSchema,
   assignTaskSchema,
+  statusUpdateSchema,
 } from "../validation/taskValidation";
 import { TaskStatus } from "../generated/prisma";
 import { get } from "https";
-import {getIO} from "@/utils/socket"
+import { getIO } from "@/utils/socket";
 import { sendPushNotifications } from "@/services/notificationService";
-
 
 /**
  * Create a new task
@@ -218,11 +218,12 @@ export const getAllTasks = asyncMiddleware(
             select: {
               id: true,
               name: true,
+              roomNumber: true
             },
           },
         },
         orderBy: {
-          createdAt: "desc",
+          dueDate: "asc",
         },
       });
 
@@ -269,7 +270,7 @@ export const getTaskById = asyncMiddleware(
             select: {
               id: true,
               name: true,
-              medicalRecord: true,
+              roomNumber: true,
             },
           },
         },
@@ -323,11 +324,11 @@ export const updateTask = asyncMiddleware(
       }
 
       // Only allow the creator or admin to update the task
-      if (existingTask.createdById !== userId && req.user?.role !== "ADMIN") {
-        return res.status(403).json({
-          message: "You don't have permission to update this task",
-        });
-      }
+      // if (existingTask.createdById !== userId && req.user?.role !== "ADMIN") {
+      //   return res.status(403).json({
+      //     message: "You don't have permission to update this task",
+      //   });
+      // }
 
       const {
         title,
@@ -665,6 +666,83 @@ export const unassignTask = asyncMiddleware(
 );
 
 /**
+ * Update the Task Status
+ */
+export const UpdateTaskStatus = asyncMiddleware(
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
+
+      const parse = statusUpdateSchema.safeParse(req.body);
+      if (!parse.success) {
+        return res
+          .status(400)
+          .json({ message: "Invalid status", errors: parse.error.format() });
+      }
+      const { status } = parse.data;
+
+      // Check if task exists
+      const existingTask = await prisma.task.findUnique({
+        where: { id },
+      });
+
+      if (!existingTask) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+
+      // Only allow the assigned user to mark as completed
+      // if (existingTask.assignedToId !== userId && req.user?.role !== "ADMIN") {
+      //   return res.status(403).json({
+      //     message:
+      //       "Only the assigned user or an admin can mark this task as completed",
+      //   });
+      // }
+
+      // Update task status to completed
+      const updatedTask = await prisma.task.update({
+        where: { id },
+        data: {
+          status,
+        },
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          assignedTo: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          patient: {
+            select: {
+              id: true,
+              name: true,
+              roomNumber: true,
+            },
+          },
+        },
+      });
+
+      res.json(updatedTask);
+    } catch (error) {
+      console.error("Complete task error:", error);
+      res.status(500).json({
+        message: "Error completing task",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  },
+);
+/**
  * Mark task as completed
  * POST /api/tasks/:id/complete
  */
@@ -718,6 +796,7 @@ export const completeTask = asyncMiddleware(
             select: {
               id: true,
               name: true,
+              roomNumber: true,
             },
           },
         },

@@ -11,7 +11,8 @@ import {
   unassignTask,
   completeTask,
   getMyTasks,
-  getTasksCreatedByMe
+  getTasksCreatedByMe,
+  UpdateTaskStatus
 } from "../controller/taskController";
 import { UserRole } from "../generated/prisma";
 
@@ -29,11 +30,12 @@ router.get("/:id", getTaskById);
 
 // Routes for doctors, nurses, and admins
 router.post("/", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), createTask);
-router.put("/:id", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), updateTask);
+router.put("/:id", updateTask);
 router.delete("/:id", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), deleteTask);
 router.post("/:id/assign", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), assignTask);
 router.post("/:id/unassign", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), unassignTask);
-router.post("/:id/complete", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE, UserRole.LABTECH), completeTask);
+router.patch("/:id/complete", completeTask);
+router.patch("/:id/status", UpdateTaskStatus)
 
 
 export default router;

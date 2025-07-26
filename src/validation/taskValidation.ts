@@ -31,6 +31,10 @@ export const updateTaskSchema = z.object({
   message: "At least one field must be provided for update",
 });
 
+export const statusUpdateSchema = z.object({
+  status: z.nativeEnum(TaskStatus),   // PENDING | IN_PROGRESS | COMPLETED | CANCELLED
+});
+
 // Schema for assigning a task
 export const assignTaskSchema = z.object({
   assignedToId: z.string({
