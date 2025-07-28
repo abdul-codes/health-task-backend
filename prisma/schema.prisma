@@ -78,6 +78,13 @@ model Task {
   assignedToId String?
   patient      Patient?     @relation(fields: [patientId], references: [id])
   patientId    String?
+  
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([patientId])
+  @@index([status])
+  @@index([dueDate]) 
+  @@index([createdAt])
 }
 
 model Patient {
@@ -91,6 +98,9 @@ model Patient {
   createdById   String
   tasks         Task[]
   assignedTo    User[] // Users (doctors, nurses) assigned to this patient
+  
+  @@index([createdById])
+  @@index([createdAt]) 
 }
 
 model Department {

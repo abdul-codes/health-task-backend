@@ -12,7 +12,7 @@ import http from "http";
 
 const app = express();
 const server = http.createServer(app);
-const io = initSocket(server);
+// const io = initSocket(server);
 
 app.use(compression());
 app.use(express.json());
@@ -54,3 +54,5 @@ const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
   console.log("Server running on localhost:8000");
 });
+
+module.exports = app;
