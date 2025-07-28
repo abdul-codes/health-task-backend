@@ -5,7 +5,7 @@ import {
   createPatientSchema,
   updatePatientSchema,
 } from "../validation/patientValidation";
-import { sendPushNotifications } from "@/utils/pushNotification"
+import { sendPushNotifications } from "../utils/pushNotification"
 /**
  * Create a new patient (Admin only)
  * POST /api/patients

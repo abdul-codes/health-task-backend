@@ -5,3 +5,5 @@ node_modules/
 .vscode
 .vercel
 generated
+# Ignore compiled JavaScript output
+/dist/
