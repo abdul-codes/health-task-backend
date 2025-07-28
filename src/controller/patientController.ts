@@ -5,7 +5,7 @@ import {
   createPatientSchema,
   updatePatientSchema,
 } from "../validation/patientValidation";
-
+import { sendPushNotifications } from "@/utils/pushNotification"
 /**
  * Create a new patient (Admin only)
  * POST /api/patients
@@ -48,6 +48,21 @@ export const createPatient = asyncMiddleware(
         message: "Patient created successfully",
         patient,
       });
+      // After successful patient creation:
+        if (assignedToIds && assignedToIds.length > 0) {
+          // Get push tokens for all assigned user
+            const notificationTitle = "New Patient Assigned";
+            const notificationBody = `Patient ${patient.name} has been assigned to you`;
+            
+            await sendPushNotifications(
+              assignedToIds,
+              notificationTitle,
+              notificationBody,
+              { patientId: patient.id }
+            );
+          }
+        
+        
     } catch (error) {
       console.error("Create patient error:", error);
       res.status(500).json({

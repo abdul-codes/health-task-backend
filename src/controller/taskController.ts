@@ -10,7 +10,7 @@ import {
 import { TaskStatus } from "../generated/prisma";
 import { get } from "https";
 import { getIO } from "@/utils/socket";
-import { sendPushNotifications } from "@/services/notificationService";
+import { sendPushNotifications } from "@/utils/pushNotification";
 
 /**
  * Create a new task
@@ -127,12 +127,12 @@ export const createTask = asyncMiddleware(
       // }
       // Websocket ends
       // Push Notification
-      if (task.assignedTo && task.assignedTo.expoPushToken) {
+      if (assignedToId) {
         const notificationTitle = `New Task: ${task.title}`;
         const notificationBody = `You have been a new ${priority.toLocaleLowerCase()} priority task to patient ${task.patient?.name} room number ${task.patient?.roomNumber}`;
 
         await sendPushNotifications(
-          [task.assignedTo.expoPushToken],
+          [assignedToId],
           notificationTitle,
           notificationBody,
           { taskId: task.id },
@@ -425,6 +425,18 @@ export const updateTask = asyncMiddleware(
         message: "Task updated successfully",
         task: updatedTask,
       });
+      // Send notifications for assignment changes
+if (assignedToId && assignedToId !== existingTask.assignedToId) {
+  const notificationTitle = "New Task Assignment Updated";
+  const notificationBody = `You've been assigned to task: ${updatedTask.title}`;
+  
+  await sendPushNotifications(
+    assignedToId,
+    notificationTitle,
+    notificationBody,
+    { taskId: updatedTask.id }
+  );
+}
     } catch (error) {
       console.error("Update task error:", error);
       res.status(500).json({
@@ -567,6 +579,17 @@ export const assignTask = asyncMiddleware(
           },
         },
       });
+      
+      // --- Trigger Notification ---
+         const notificationTitle = `Task Assigned: ${existingTask.title}`;
+         const notificationBody = `You have been assigned an existing task.`;
+         await sendPushNotifications(
+           assignedToId,
+           notificationTitle,
+           notificationBody,
+           { taskId: updatedTask.id }
+         );
+         // --- End Notification ---
 
       res.json({
         message: "Task assigned successfully",
@@ -712,6 +735,7 @@ export const UpdateTaskStatus = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              expoPushToken: true
             },
           },
           assignedTo: {
@@ -731,6 +755,20 @@ export const UpdateTaskStatus = asyncMiddleware(
           },
         },
       });
+          // After successful status update:
+    if (updatedTask.status === TaskStatus.COMPLETED && updatedTask.createdBy?.expoPushToken) {
+      const notificationTitle = "Task Completed";
+      const notificationBody = `Task "${updatedTask.title}" has been marked as completed`;
+      
+      await sendPushNotifications(
+        [updatedTask.createdBy.expoPushToken],
+        notificationTitle,
+        notificationBody,
+        { taskId: updatedTask.id }
+      );
+    }
+      
+      
 
       res.json(updatedTask);
     } catch (error) {
