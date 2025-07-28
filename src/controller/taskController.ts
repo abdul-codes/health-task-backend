@@ -129,13 +129,15 @@ export const createTask = asyncMiddleware(
       // Push Notification
       if (assignedToId) {
         const notificationTitle = `New Task: ${task.title}`;
-        const notificationBody = `You have been a new ${priority.toLocaleLowerCase()} priority task to patient ${task.patient?.name} room number ${task.patient?.roomNumber}`;
+        const notificationBody = `You have been a new ${priority.toLocaleLowerCase()} priority task to patient ${
+          task.patient?.name
+        } room number ${task.patient?.roomNumber}`;
 
         await sendPushNotifications(
           [assignedToId],
           notificationTitle,
           notificationBody,
-          { taskId: task.id },
+          { taskId: task.id }
         );
       }
 
@@ -164,7 +166,7 @@ export const createTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -218,7 +220,7 @@ export const getAllTasks = asyncMiddleware(
             select: {
               id: true,
               name: true,
-              roomNumber: true
+              roomNumber: true,
             },
           },
         },
@@ -235,7 +237,7 @@ export const getAllTasks = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -288,7 +290,7 @@ export const getTaskById = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -426,17 +428,33 @@ export const updateTask = asyncMiddleware(
         task: updatedTask,
       });
       // Send notifications for assignment changes
-if (assignedToId && assignedToId !== existingTask.assignedToId) {
-  const notificationTitle = "New Task Assignment Updated";
-  const notificationBody = `You've been assigned to task: ${updatedTask.title}`;
-  
-  await sendPushNotifications(
-    assignedToId,
-    notificationTitle,
-    notificationBody,
-    { taskId: updatedTask.id }
-  );
-}
+      if (assignedToId && assignedToId !== existingTask.assignedToId) {
+        const notificationTitle = "New Task Assignment Updated";
+        const notificationBody = `You've been assigned to task: ${updatedTask.title}`;
+
+        await sendPushNotifications(
+          [assignedToId],
+          notificationTitle,
+          notificationBody,
+          { taskId: updatedTask.id }
+        );
+      }
+
+      // In updateTask function, after updating the task
+      if (assignedToId && assignedToId !== existingTask.assignedToId) {
+        // If task is being reassigned from one user to another
+        if (existingTask.assignedToId) {
+          const reassignmentTitle = "Task Reassigned";
+          const reassignmentBody = `Task "${updatedTask.title}" has been reassigned to another user`;
+
+          await sendPushNotifications(
+            [existingTask.assignedToId],
+            reassignmentTitle,
+            reassignmentBody,
+            { taskId: updatedTask.id }
+          );
+        }
+      }
     } catch (error) {
       console.error("Update task error:", error);
       res.status(500).json({
@@ -444,7 +462,7 @@ if (assignedToId && assignedToId !== existingTask.assignedToId) {
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -489,7 +507,7 @@ export const deleteTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -579,17 +597,17 @@ export const assignTask = asyncMiddleware(
           },
         },
       });
-      
+
       // --- Trigger Notification ---
-         const notificationTitle = `Task Assigned: ${existingTask.title}`;
-         const notificationBody = `You have been assigned an existing task.`;
-         await sendPushNotifications(
-           assignedToId,
-           notificationTitle,
-           notificationBody,
-           { taskId: updatedTask.id }
-         );
-         // --- End Notification ---
+      const notificationTitle = `Task Assigned: ${existingTask.title}`;
+      const notificationBody = `You have been assigned an existing task.`;
+      await sendPushNotifications(
+        assignedToId,
+        notificationTitle,
+        notificationBody,
+        { taskId: updatedTask.id }
+      );
+      // --- End Notification ---
 
       res.json({
         message: "Task assigned successfully",
@@ -602,7 +620,7 @@ export const assignTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -685,7 +703,7 @@ export const unassignTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -735,7 +753,7 @@ export const UpdateTaskStatus = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
-              expoPushToken: true
+              expoPushToken: true,
             },
           },
           assignedTo: {
@@ -755,20 +773,40 @@ export const UpdateTaskStatus = asyncMiddleware(
           },
         },
       });
-          // After successful status update:
-    if (updatedTask.status === TaskStatus.COMPLETED && updatedTask.createdBy?.expoPushToken) {
-      const notificationTitle = "Task Completed";
-      const notificationBody = `Task "${updatedTask.title}" has been marked as completed`;
-      
-      await sendPushNotifications(
-        [updatedTask.createdBy.expoPushToken],
-        notificationTitle,
-        notificationBody,
-        { taskId: updatedTask.id }
-      );
-    }
-      
-      
+      // After successful status update:
+      if (
+        updatedTask.status === TaskStatus.COMPLETED &&
+        updatedTask.createdBy?.expoPushToken
+      ) {
+        const notificationTitle = "Task Completed";
+        const notificationBody = `Task "${updatedTask.title}" has been marked as completed`;
+
+        await sendPushNotifications(
+          [updatedTask.createdBy.expoPushToken],
+          notificationTitle,
+          notificationBody,
+          { taskId: updatedTask.id }
+        );
+      }
+      // Add notification for status changes
+      if (status && status !== existingTask.status) {
+        const statusTitle = `Task Status Updated: ${updatedTask.title}`;
+        const statusBody = `Task status changed to ${status}`;
+
+        // Notify both the creator and assigned user
+        const usersToNotify = [];
+        if (updatedTask.createdById)
+          usersToNotify.push(updatedTask.createdById);
+        if (updatedTask.assignedToId)
+          usersToNotify.push(updatedTask.assignedToId);
+
+        // Only send if there are users to notify
+        if (usersToNotify.length > 0) {
+          await sendPushNotifications(usersToNotify, statusTitle, statusBody, {
+            taskId: updatedTask.id,
+          });
+        }
+      }
 
       res.json(updatedTask);
     } catch (error) {
@@ -778,7 +816,7 @@ export const UpdateTaskStatus = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 /**
  * Mark task as completed
@@ -851,7 +889,7 @@ export const completeTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -904,7 +942,7 @@ export const getMyTasks = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
 
 /**
@@ -957,5 +995,5 @@ export const getTasksCreatedByMe = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  },
+  }
 );
