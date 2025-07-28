@@ -4,3 +4,4 @@ node_modules/
 .zencoder
 .vscode
 .vercel
+generated
