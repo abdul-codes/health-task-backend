@@ -7,8 +7,8 @@ import userRoutes from "./routes/userRoutes";
 import patientRoutes from "./routes/patientRoutes";
 import taskRoutes from "./routes/taskRoutes";
 import limiter from "./middleware/rateLimitMiddleware";
-import { initSocket } from "./utils/socket";
-import http from "http";
+// import { initSocket } from "./utils/socket";
+// import http from "http";
 
 const app = express();
 //const server = http.createServer(app);
