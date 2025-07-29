@@ -10,7 +10,7 @@ import {
 import { TaskStatus } from "../generated/prisma";
 import { get } from "https";
 import { getIO } from "@/utils/socket";
-import { sendPushNotifications } from "@/utils/pushNotification";
+import { sendPushNotifications } from "../utils/pushNotification";
 
 /**
  * Create a new task
