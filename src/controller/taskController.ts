@@ -137,7 +137,7 @@ export const createTask = asyncMiddleware(
           [assignedToId],
           notificationTitle,
           notificationBody,
-          { taskId: task.id }
+          { taskId: task.id },
         );
       }
 
@@ -166,7 +166,7 @@ export const createTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -198,6 +198,7 @@ export const getAllTasks = asyncMiddleware(
       }
 
       const tasks = await prisma.task.findMany({
+     
         where: filter,
         include: {
           createdBy: {
@@ -237,7 +238,7 @@ export const getAllTasks = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -250,6 +251,7 @@ export const getTaskById = asyncMiddleware(
       const { id } = req.params;
 
       const task = await prisma.task.findUnique({
+      
         where: { id },
         include: {
           createdBy: {
@@ -290,7 +292,7 @@ export const getTaskById = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -436,7 +438,7 @@ export const updateTask = asyncMiddleware(
           [assignedToId],
           notificationTitle,
           notificationBody,
-          { taskId: updatedTask.id }
+          { taskId: updatedTask.id },
         );
       }
 
@@ -451,7 +453,7 @@ export const updateTask = asyncMiddleware(
             [existingTask.assignedToId],
             reassignmentTitle,
             reassignmentBody,
-            { taskId: updatedTask.id }
+            { taskId: updatedTask.id },
           );
         }
       }
@@ -462,7 +464,7 @@ export const updateTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -507,7 +509,7 @@ export const deleteTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -605,7 +607,7 @@ export const assignTask = asyncMiddleware(
         assignedToId,
         notificationTitle,
         notificationBody,
-        { taskId: updatedTask.id }
+        { taskId: updatedTask.id },
       );
       // --- End Notification ---
 
@@ -620,7 +622,7 @@ export const assignTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -703,7 +705,7 @@ export const unassignTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -774,39 +776,50 @@ export const UpdateTaskStatus = asyncMiddleware(
         },
       });
       // After successful status update:
-      if (
-        updatedTask.status === TaskStatus.COMPLETED &&
-        updatedTask.createdBy?.expoPushToken
-      ) {
-        const notificationTitle = "Task Completed";
-        const notificationBody = `Task "${updatedTask.title}" has been marked as completed`;
-
-        await sendPushNotifications(
-          [updatedTask.createdBy.expoPushToken],
-          notificationTitle,
-          notificationBody,
-          { taskId: updatedTask.id }
-        );
-      }
-      // Add notification for status changes
-      if (status && status !== existingTask.status) {
-        const statusTitle = `Task Status Updated: ${updatedTask.title}`;
-        const statusBody = `Task status changed to ${status}`;
-
-        // Notify both the creator and assigned user
-        const usersToNotify = [];
-        if (updatedTask.createdById)
-          usersToNotify.push(updatedTask.createdById);
-        if (updatedTask.assignedToId)
-          usersToNotify.push(updatedTask.assignedToId);
-
-        // Only send if there are users to notify
-        if (usersToNotify.length > 0) {
-          await sendPushNotifications(usersToNotify, statusTitle, statusBody, {
-            taskId: updatedTask.id,
-          });
-        }
-      }
+      // --- Comprehensive Notification Logic ---
+          if (updatedTask.createdById) {
+            let notificationTitle = "";
+            let notificationBody = "";
+    
+            switch (updatedTask.status) {
+              case TaskStatus.IN_PROGRESS:
+                notificationTitle = "Task Started";
+                notificationBody = `The task "${updatedTask.title}" has been started.`;
+                break;
+              case TaskStatus.COMPLETED:
+                notificationTitle = "Task Completed";
+                notificationBody = `Your task "${updatedTask.title}" has been marked as completed.`;
+                break;
+              case TaskStatus.CANCELLED:
+                // This is ready for when you implement a "Cancel" action
+                notificationTitle = "Task Cancelled";
+                notificationBody = `The task "${updatedTask.title}" has been cancelled.`;
+                break;
+            }
+            // Determine who needs to be notified
+               const recipientIds = new Set<string>();
+               
+               //  notify the creator? Yes, if they aren't the one who updated the task.
+               if (updatedTask.createdById && updatedTask.createdById !== userId) {
+                 recipientIds.add(updatedTask.createdById);
+               }
+               
+               // Should we notify the assignee? Yes, if they exist and aren't the one who updated the task.
+               if (updatedTask.assignedToId && updatedTask.assignedToId !== userId) {
+                 recipientIds.add(updatedTask.assignedToId);
+               }
+    
+            // Only send a notification if a relevant status change occurred
+            if (notificationTitle && notificationBody) {
+              await sendPushNotifications(
+                Array.from(recipientIds), // Send to the user who created the task
+                notificationTitle,
+                notificationBody,
+                { taskId: updatedTask.id } // Navigate to the task on tap
+              );
+            }
+          }
+          // --- End Notification Logic ---
 
       res.json(updatedTask);
     } catch (error) {
@@ -816,7 +829,7 @@ export const UpdateTaskStatus = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 /**
  * Mark task as completed
@@ -889,7 +902,7 @@ export const completeTask = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -905,6 +918,7 @@ export const getMyTasks = asyncMiddleware(
       // Build filter object
       const filter: any = {
         assignedToId: userId,
+    //    createdById: userId,
       };
 
       if (status) {
@@ -942,7 +956,7 @@ export const getMyTasks = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );
 
 /**
@@ -995,5 +1009,5 @@ export const getTasksCreatedByMe = asyncMiddleware(
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-  }
+  },
 );

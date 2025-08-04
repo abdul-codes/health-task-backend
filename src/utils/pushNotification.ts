@@ -15,7 +15,7 @@ export async function sendPushNotifications(
   userIds: string | string[],
   title: string,
   body: string,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ) {
   try {
     const idArray = Array.isArray(userIds) ? userIds : [userIds];
@@ -33,6 +33,7 @@ export async function sendPushNotifications(
     const pushTokens = users
       .map((u) => u.expoPushToken)
       .filter((token): token is string => token !== null);
+    console.log(`Found ${pushTokens} valid push tokens.`);
 
     if (pushTokens.length === 0) {
       console.log("No valid push tokens found for the specified users.");
