@@ -8,7 +8,6 @@ import {
   statusUpdateSchema,
 } from "../validation/taskValidation";
 import { TaskStatus } from "../generated/prisma";
-import { get } from "https";
 import { getIO } from "@/utils/socket";
 import { sendPushNotifications } from "../utils/pushNotification";
 
@@ -198,7 +197,6 @@ export const getAllTasks = asyncMiddleware(
       }
 
       const tasks = await prisma.task.findMany({
-     
         where: filter,
         include: {
           createdBy: {
@@ -251,7 +249,6 @@ export const getTaskById = asyncMiddleware(
       const { id } = req.params;
 
       const task = await prisma.task.findUnique({
-      
         where: { id },
         include: {
           createdBy: {
@@ -604,7 +601,7 @@ export const assignTask = asyncMiddleware(
       const notificationTitle = `Task Assigned: ${existingTask.title}`;
       const notificationBody = `You have been assigned an existing task.`;
       await sendPushNotifications(
-        assignedToId,
+        [assignedToId],
         notificationTitle,
         notificationBody,
         { taskId: updatedTask.id },
@@ -777,49 +774,49 @@ export const UpdateTaskStatus = asyncMiddleware(
       });
       // After successful status update:
       // --- Comprehensive Notification Logic ---
-          if (updatedTask.createdById) {
-            let notificationTitle = "";
-            let notificationBody = "";
-    
-            switch (updatedTask.status) {
-              case TaskStatus.IN_PROGRESS:
-                notificationTitle = "Task Started";
-                notificationBody = `The task "${updatedTask.title}" has been started.`;
-                break;
-              case TaskStatus.COMPLETED:
-                notificationTitle = "Task Completed";
-                notificationBody = `Your task "${updatedTask.title}" has been marked as completed.`;
-                break;
-              case TaskStatus.CANCELLED:
-                // This is ready for when you implement a "Cancel" action
-                notificationTitle = "Task Cancelled";
-                notificationBody = `The task "${updatedTask.title}" has been cancelled.`;
-                break;
-            }
-            // Determine who needs to be notified
-               const recipientIds = new Set<string>();
-               
-               //  notify the creator? Yes, if they aren't the one who updated the task.
-               if (updatedTask.createdById && updatedTask.createdById !== userId) {
-                 recipientIds.add(updatedTask.createdById);
-               }
-               
-               // Should we notify the assignee? Yes, if they exist and aren't the one who updated the task.
-               if (updatedTask.assignedToId && updatedTask.assignedToId !== userId) {
-                 recipientIds.add(updatedTask.assignedToId);
-               }
-    
-            // Only send a notification if a relevant status change occurred
-            if (notificationTitle && notificationBody) {
-              await sendPushNotifications(
-                Array.from(recipientIds), // Send to the user who created the task
-                notificationTitle,
-                notificationBody,
-                { taskId: updatedTask.id } // Navigate to the task on tap
-              );
-            }
-          }
-          // --- End Notification Logic ---
+      if (updatedTask.createdById) {
+        let notificationTitle = "";
+        let notificationBody = "";
+
+        switch (updatedTask.status) {
+          case TaskStatus.IN_PROGRESS:
+            notificationTitle = "Task Started";
+            notificationBody = `The task "${updatedTask.title}" has been started.`;
+            break;
+          case TaskStatus.COMPLETED:
+            notificationTitle = "Task Completed";
+            notificationBody = `Your task "${updatedTask.title}" has been marked as completed.`;
+            break;
+          case TaskStatus.CANCELLED:
+            // This is ready for when you implement a "Cancel" action
+            notificationTitle = "Task Cancelled";
+            notificationBody = `The task "${updatedTask.title}" has been cancelled.`;
+            break;
+        }
+        // Determine who needs to be notified
+        const recipientIds = new Set<string>();
+
+        //  notify the creator? Yes, if they aren't the one who updated the task.
+        if (updatedTask.createdById && updatedTask.createdById !== userId) {
+          recipientIds.add(updatedTask.createdById);
+        }
+
+        // Should we notify the assignee? Yes, if they exist and aren't the one who updated the task.
+        if (updatedTask.assignedToId && updatedTask.assignedToId !== userId) {
+          recipientIds.add(updatedTask.assignedToId);
+        }
+
+        // Only send a notification if a relevant status change occurred
+        if (notificationTitle && notificationBody) {
+          await sendPushNotifications(
+            Array.from(recipientIds), // Send to the user who created the task
+            notificationTitle,
+            notificationBody,
+            { taskId: updatedTask.id }, // Navigate to the task on tap
+          );
+        }
+      }
+      // --- End Notification Logic ---
 
       res.json(updatedTask);
     } catch (error) {
@@ -913,16 +910,20 @@ export const getMyTasks = asyncMiddleware(
   async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
-      const { status } = req.query;
+      const { status, priority } = req.query;
 
       // Build filter object
       const filter: any = {
         assignedToId: userId,
-    //    createdById: userId,
+        //    createdById: userId,
       };
 
       if (status) {
         filter.status = status as string;
+      }
+      
+      if (priority) {
+        filter.priority = priority as string;
       }
 
       const tasks = await prisma.task.findMany({
@@ -967,7 +968,7 @@ export const getTasksCreatedByMe = asyncMiddleware(
   async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
-      const { status } = req.query;
+      const { status, priority } = req.query;
 
       // Build filter object
       const filter: any = {
@@ -976,6 +977,10 @@ export const getTasksCreatedByMe = asyncMiddleware(
 
       if (status) {
         filter.status = status as string;
+      }
+
+      if (priority) {
+        filter.priority = priority as string;
       }
 
       const tasks = await prisma.task.findMany({

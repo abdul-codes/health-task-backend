@@ -28,7 +28,10 @@ router.get("/:id", authenticateUser, getPatientById);
 // Update patient -
 router.put("/:id", authenticateUser, authorizeAdmin, updatePatient);
 
+
 // Delete patient - Admin only
 router.delete("/:id", authenticateUser, authorizeAdmin, deletePatient);
+
+
 
 export default router;
