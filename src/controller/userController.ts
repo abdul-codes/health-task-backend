@@ -26,6 +26,10 @@ export const getUserProfile = asyncMiddleware(async (req: Request, res: Response
         createdAt: true,
         updatedAt: true,
       },
+      ...( {cacheStrategy: {
+        swr: 60,
+        ttl: 30,
+      } }as any)
     });
 
     if (!user) {
@@ -417,11 +421,11 @@ export const getAllUsers = asyncMiddleware(async (req: Request, res: Response) =
         profilePicture: true,
         phoneNumber: true,
         role: true,
-        isApproved: true,
+      //  isApproved: true,
         createdAt: true,
         updatedAt: true,
-        approvedAt: true,
-        approvedById: true
+        // approvedAt: true,
+        // approvedById: true
       },
       orderBy: {
         createdAt: 'desc'
@@ -533,7 +537,11 @@ export const getUsersForDropdown = asyncMiddleware(async (req: Request, res: Res
       },
       orderBy: {
         firstName: 'asc'
-      }
+      },
+      ...( {cacheStrategy: {
+        swr: 60,
+        ttl: 30,
+      } }as any)
     });
 
     // Format for dropdown (id, display name)

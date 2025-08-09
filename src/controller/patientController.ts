@@ -107,6 +107,10 @@ export const createPatient = asyncMiddleware(
        orderBy: {
          createdAt: 'desc',
        },
+       ...( {cacheStrategy: {
+        swr: 60,
+        ttl: 30,
+      } }as any)
      });
  
      res.json(patients);
@@ -135,7 +139,11 @@ export const createPatient = asyncMiddleware(
        },
        orderBy: {
          name: 'asc' // Sort alphabetically for a better user experience
-       }
+       },
+       ...( {cacheStrategy: {
+        swr: 60,
+        ttl: 30,
+      } }as any)
      });
  
      res.json(patients); // Send the direct array of patients
@@ -172,6 +180,10 @@ export const getPatientById = asyncMiddleware(
           },
           tasks: true,
         },
+        ...( {cacheStrategy: {
+          swr: 60,
+          ttl: 30,
+        } }as any)
       });
 
       if (!patient) {

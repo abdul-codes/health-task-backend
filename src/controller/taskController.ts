@@ -226,6 +226,10 @@ export const getAllTasks = asyncMiddleware(
         orderBy: {
           dueDate: "asc",
         },
+       ...( {cacheStrategy: {
+          swr: 60,
+          ttl: 30,
+        } }as any)
       });
 
       res.json(tasks);
@@ -275,6 +279,10 @@ export const getTaskById = asyncMiddleware(
             },
           },
         },
+        ...( {cacheStrategy: {
+          swr: 60,
+          ttl: 30,
+        } }as any)
       });
 
       if (!task) {
@@ -947,6 +955,10 @@ export const getMyTasks = asyncMiddleware(
         orderBy: {
           dueDate: "asc",
         },
+        ...( {cacheStrategy: {
+          swr: 60,
+          ttl: 30,
+        } }as any)
       });
 
       res.json(tasks);
