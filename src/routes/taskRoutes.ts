@@ -29,7 +29,7 @@ router.get("/", getAllTasks);
 router.get("/:id", getTaskById);
 
 // Routes for doctors, nurses, and admins
-router.post("/", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), createTask);
+router.post("/", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR), createTask);
 router.put("/:id", updateTask);
 router.delete("/:id", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), deleteTask);
 router.post("/:id/assign", authorizeRoles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.NURSE), assignTask);

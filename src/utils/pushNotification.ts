@@ -76,6 +76,18 @@ export const sendPushNotifications = async (
     }
   }
 
+  // Create notifications in the database
+  const notificationData = idArray.map(userId => ({
+    title,
+    body,
+    data: data || {},
+    userId,
+  }));
+
+  await prisma.notification.createMany({
+    data: notificationData,
+  });
+
   // 4. Process the tickets returned from Expo to check for errors.
   for (const ticket of tickets) {
     // A ticket with a "status" of "error" means Expo had a problem delivering the notification.
