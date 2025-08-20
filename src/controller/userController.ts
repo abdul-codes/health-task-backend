@@ -58,15 +58,15 @@ export const updateUserProfile = asyncMiddleware(async (req: Request, res: Respo
     const {
       firstName,
       lastName,
-      department,
+     // department,
       profilePicture,
-      phoneNumber,
+    //  phoneNumber,
     } = req.body;
 
     // Validate required fields
-    if (!firstName || !lastName || !department) {
+    if (!firstName || !lastName ) { // || !department
       return res.status(400).json({
-        message: "First name, last name, and department are required",
+        message: "First name, last name, are required",
       });
     }
 
@@ -75,16 +75,16 @@ export const updateUserProfile = asyncMiddleware(async (req: Request, res: Respo
       data: {
         firstName,
         lastName,
-        department,
+     //   department,
         profilePicture,
-        phoneNumber,
+     //   phoneNumber,
       },
       select: {
         id: true,
         email: true,
         firstName: true,
         lastName: true,
-        department: true,
+     //   department: true,
         profilePicture: true,
         phoneNumber: true,
         role: true,
