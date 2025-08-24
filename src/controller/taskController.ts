@@ -126,18 +126,28 @@ export const createTask = asyncMiddleware(
       // }
       // Websocket ends
       // Push Notification
+      const notificationRecipients = new Set<string>();
       if (assignedToId) {
-        const notificationTitle = `New Task: ${task.title}`;
-        const notificationBody = `You have been a new ${priority.toLocaleLowerCase()} priority task to patient ${
-          task.patient?.name
-        } room number ${task.patient?.roomNumber}`;
+        notificationRecipients.add(assignedToId);
+      }
+      // Also notify the creator of the task
+      if (task.createdById) {
+          notificationRecipients.add(task.createdById);
+      }
 
-        await sendPushNotifications(
-          [assignedToId],
-          notificationTitle,
-          notificationBody,
-          { taskId: task.id },
-        );
+
+      if (notificationRecipients.size > 0) {
+          const notificationTitle = `New Task: ${task.title}`;
+          const notificationBody = `A new ${priority.toLocaleLowerCase()} priority task has been created for patient ${
+            task.patient?.name
+          } in room number ${task.patient?.roomNumber}`;
+
+          await sendPushNotifications(
+            Array.from(notificationRecipients),
+            notificationTitle,
+            notificationBody,
+            { taskId: task.id },
+          );
       }
 
       // End of push notification
@@ -436,31 +446,28 @@ export const updateTask = asyncMiddleware(
       });
       // Send notifications for assignment changes
       if (assignedToId && assignedToId !== existingTask.assignedToId) {
-        const notificationTitle = "New Task Assignment Updated";
-        const notificationBody = `You've been assigned to task: ${updatedTask.title}`;
+          const notificationRecipients = new Set<string>();
+          notificationRecipients.add(assignedToId); // a new user is assigned the task
 
-        await sendPushNotifications(
-          [assignedToId],
-          notificationTitle,
-          notificationBody,
-          { taskId: updatedTask.id },
-        );
-      }
+          // If task is being reassigned from one user to another
+          if (existingTask.assignedToId) {
+              notificationRecipients.add(existingTask.assignedToId); // the old user that was assigned
+          }
 
-      // In updateTask function, after updating the task
-      if (assignedToId && assignedToId !== existingTask.assignedToId) {
-        // If task is being reassigned from one user to another
-        if (existingTask.assignedToId) {
-          const reassignmentTitle = "Task Reassigned";
-          const reassignmentBody = `Task "${updatedTask.title}" has been reassigned to another user`;
+          // Also notify the creator of the task about the change
+          if (existingTask.createdById) {
+              notificationRecipients.add(existingTask.createdById);
+          }
+
+          const notificationTitle = "Task Assignment Updated";
+          const notificationBody = `Task "${updatedTask.title}" has been reassigned.`;
 
           await sendPushNotifications(
-            [existingTask.assignedToId],
-            reassignmentTitle,
-            reassignmentBody,
+            Array.from(notificationRecipients),
+            notificationTitle,
+            notificationBody,
             { taskId: updatedTask.id },
           );
-        }
       }
     } catch (error) {
       console.error("Update task error:", error);

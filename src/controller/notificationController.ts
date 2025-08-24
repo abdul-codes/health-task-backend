@@ -8,11 +8,14 @@ import { prisma } from "../utils/db";
  */
 export const getNotifications = asyncMiddleware(async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  console.log("Fetching notifications for user:", userId);
 
   const notifications = await prisma.notification.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
   });
+
+  console.log("Found", notifications.length, "notifications");
 
   res.json(notifications);
 });

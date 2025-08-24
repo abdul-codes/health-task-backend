@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import "dotenv/config";
 import compression from "compression";
@@ -56,5 +56,14 @@ app.get("/api/test", async (req: Request, res: Response) => {
 // server.listen(PORT, () => {
 //   console.log("Server running on localhost:8000");
 // });
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+  });
+});
 
 module.exports = app;
