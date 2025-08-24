@@ -13,6 +13,10 @@ export const getNotifications = asyncMiddleware(async (req: Request, res: Respon
   const notifications = await prisma.notification.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
+    ...( {cacheStrategy: {
+      swr: 60,
+      ttl: 30,
+    } }as any)
   });
 
   console.log("Found", notifications.length, "notifications");

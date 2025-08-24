@@ -80,19 +80,30 @@ export const createPatient = asyncMiddleware(
  
  export const getAllPatients = asyncMiddleware(async (req: Request, res: Response) => {
    try {
-     const userId = req.user?.id;
+     const { id: userId, role: userRole } = req.user!;
  
-     // By default, fetch patients assigned to the current user
-     // A query parameter could be added for admins to fetch all patients, e.g., ?all=true
-     const patients = await prisma.patient.findMany({
-       where: {
+     let whereClause: any = {};
+ 
+     if (userRole === 'ADMIN') {
+       // Admins can see all patients.
+       whereClause = {};
+     } else if (userRole === 'DOCTOR') {
+       // Doctors see patients they created OR are assigned to.
+       whereClause = {
          OR: [
            { createdById: userId },
-           {
-             assignedTo: { some: { id: userId } },
-           },
+           { assignedTo: { some: { id: userId } } },
          ],
-       },
+       };
+     } else {
+       // Nurses and Labtechs only see patients they are assigned to.
+       whereClause = {
+         assignedTo: { some: { id: userId } },
+       };
+     }
+ 
+     const patients = await prisma.patient.findMany({
+       where: whereClause,
        include: {
          createdBy: {
            select: {

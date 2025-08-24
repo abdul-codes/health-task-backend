@@ -185,29 +185,28 @@ export const createTask = asyncMiddleware(
 export const getAllTasks = asyncMiddleware(
   async (req: Request, res: Response) => {
     try {
-      const { status, priority, assignedToId, patientId } = req.query;
+      const { id: userId, role: userRole } = req.user!;
+      const { status, priority, patientId } = req.query;
 
-      // Build filter object
-      const filter: any = {};
+      const where: any = {};
 
-      if (status) {
-        filter.status = status as string;
-      }
+      // 1. Build base filter from query params
+      if (status) where.status = status as string;
+      if (priority) where.priority = priority as string;
+      if (patientId) where.patientId = patientId as string;
 
-      if (priority) {
-        filter.priority = priority as string;
-      }
-
-      if (assignedToId) {
-        filter.assignedToId = assignedToId as string;
-      }
-
-      if (patientId) {
-        filter.patientId = patientId as string;
+      // 2. Apply role-based visibility rules
+      if (userRole === 'ADMIN') {
+        // Admins see all tasks. No extra filter needed.
+      } else if (userRole === 'DOCTOR') {
+        // Doctors see tasks they created OR are assigned to.
+        where.OR = [{ createdById: userId }, { assignedToId: userId }];
+      } else {
+        // Nurses and Labtechs only see tasks assigned to them.
+        where.assignedToId = userId;
       }
 
       const tasks = await prisma.task.findMany({
-        where: filter,
         include: {
           createdBy: {
             select: {
