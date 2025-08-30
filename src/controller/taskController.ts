@@ -80,6 +80,7 @@ export const createTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true
             },
           },
           assignedTo: {
@@ -88,6 +89,7 @@ export const createTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
               expoPushToken: true,
             },
           },
