@@ -588,3 +588,59 @@ export const setPushToken = asyncMiddleware(async (req: Request, res: Response) 
     res.status(500).json({ message: "An unexpected error occurred while saving the push token." });
   }
 });
+
+// Get user statistics
+export const getUserStatistics = asyncMiddleware(async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Get all tasks and patients data in parallel for efficiency
+    const [tasks, patients] = await Promise.all([
+      prisma.task.findMany({
+        where: {
+          OR: [
+            { createdById: userId },
+            { assignedToId: userId }
+          ]
+        },
+        select: {
+          id: true,
+          status: true,
+          createdById: true,
+          assignedToId: true,
+        }
+      }),
+      prisma.patient.findMany({
+        where: {
+          createdById: userId
+        },
+        select: {
+          id: true,
+        }
+      })
+    ]);
+
+    // Calculate statistics
+    const stats = {
+      tasksCreated: tasks.filter(task => task.createdById === userId).length,
+      tasksAssigned: tasks.filter(task => task.assignedToId === userId).length,
+      tasksCompleted: tasks.filter(task => 
+        task.status === 'COMPLETED' && 
+        (task.createdById === userId || task.assignedToId === userId)
+      ).length,
+      patientsAssigned: patients.length, // For now, this is patients created by user
+    };
+
+    res.json(stats);
+  } catch (error) {
+    console.error("Get user statistics error:", error);
+    res.status(500).json({
+      message: "Error fetching user statistics",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});

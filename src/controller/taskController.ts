@@ -80,7 +80,7 @@ export const createTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
-              role: true
+              role: true,
             },
           },
           assignedTo: {
@@ -134,22 +134,21 @@ export const createTask = asyncMiddleware(
       }
       // Also notify the creator of the task
       if (task.createdById) {
-          notificationRecipients.add(task.createdById);
+        notificationRecipients.add(task.createdById);
       }
 
-
       if (notificationRecipients.size > 0) {
-          const notificationTitle = `New Task: ${task.title}`;
-          const notificationBody = `A new ${priority.toLocaleLowerCase()} priority task has been created for patient ${
-            task.patient?.name
-          } in room number ${task.patient?.roomNumber}`;
+        const notificationTitle = `New Task: ${task.title}`;
+        const notificationBody = `A new ${priority.toLocaleLowerCase()} priority task has been created for patient ${
+          task.patient?.name
+        } in room number ${task.patient?.roomNumber}`;
 
-          await sendPushNotifications(
-            Array.from(notificationRecipients),
-            notificationTitle,
-            notificationBody,
-            { taskId: task.id },
-          );
+        await sendPushNotifications(
+          Array.from(notificationRecipients),
+          notificationTitle,
+          notificationBody,
+          { taskId: task.id },
+        );
       }
 
       // End of push notification
@@ -198,9 +197,9 @@ export const getAllTasks = asyncMiddleware(
       if (patientId) where.patientId = patientId as string;
 
       // 2. Apply role-based visibility rules
-      if (userRole === 'ADMIN') {
+      if (userRole === "ADMIN") {
         // Admins see all tasks. No extra filter needed.
-      } else if (userRole === 'DOCTOR') {
+      } else if (userRole === "DOCTOR") {
         // Doctors see tasks they created OR are assigned to.
         where.OR = [{ createdById: userId }, { assignedToId: userId }];
       } else {
@@ -216,6 +215,7 @@ export const getAllTasks = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           assignedTo: {
@@ -224,6 +224,7 @@ export const getAllTasks = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -237,10 +238,12 @@ export const getAllTasks = asyncMiddleware(
         orderBy: {
           dueDate: "asc",
         },
-       ...( {cacheStrategy: {
-          swr: 60,
-          ttl: 30,
-        } }as any)
+        ...({
+          cacheStrategy: {
+            swr: 60,
+            ttl: 30,
+          },
+        } as any),
       });
 
       res.json(tasks);
@@ -272,6 +275,7 @@ export const getTaskById = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           assignedTo: {
@@ -280,6 +284,7 @@ export const getTaskById = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -290,10 +295,12 @@ export const getTaskById = asyncMiddleware(
             },
           },
         },
-        ...( {cacheStrategy: {
-          swr: 60,
-          ttl: 30,
-        } }as any)
+        ...({
+          cacheStrategy: {
+            swr: 60,
+            ttl: 30,
+          },
+        } as any),
       });
 
       if (!task) {
@@ -422,6 +429,7 @@ export const updateTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           assignedTo: {
@@ -430,6 +438,7 @@ export const updateTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -447,28 +456,28 @@ export const updateTask = asyncMiddleware(
       });
       // Send notifications for assignment changes
       if (assignedToId && assignedToId !== existingTask.assignedToId) {
-          const notificationRecipients = new Set<string>();
-          notificationRecipients.add(assignedToId); // a new user is assigned the task
+        const notificationRecipients = new Set<string>();
+        notificationRecipients.add(assignedToId); // a new user is assigned the task
 
-          // If task is being reassigned from one user to another
-          if (existingTask.assignedToId) {
-              notificationRecipients.add(existingTask.assignedToId); // the old user that was assigned
-          }
+        // If task is being reassigned from one user to another
+        if (existingTask.assignedToId) {
+          notificationRecipients.add(existingTask.assignedToId); // the old user that was assigned
+        }
 
-          // Also notify the creator of the task about the change
-          if (existingTask.createdById) {
-              notificationRecipients.add(existingTask.createdById);
-          }
+        // Also notify the creator of the task about the change
+        if (existingTask.createdById) {
+          notificationRecipients.add(existingTask.createdById);
+        }
 
-          const notificationTitle = "Task Assignment Updated";
-          const notificationBody = `Task "${updatedTask.title}" has been reassigned.`;
+        const notificationTitle = "Task Assignment Updated";
+        const notificationBody = `Task "${updatedTask.title}" has been reassigned.`;
 
-          await sendPushNotifications(
-            Array.from(notificationRecipients),
-            notificationTitle,
-            notificationBody,
-            { taskId: updatedTask.id },
-          );
+        await sendPushNotifications(
+          Array.from(notificationRecipients),
+          notificationTitle,
+          notificationBody,
+          { taskId: updatedTask.id },
+        );
       }
     } catch (error) {
       console.error("Update task error:", error);
@@ -594,6 +603,7 @@ export const assignTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           assignedTo: {
@@ -602,6 +612,7 @@ export const assignTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -688,6 +699,7 @@ export const unassignTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           assignedTo: {
@@ -696,6 +708,7 @@ export const unassignTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -769,6 +782,7 @@ export const UpdateTaskStatus = asyncMiddleware(
               lastName: true,
               email: true,
               expoPushToken: true,
+              role: true,
             },
           },
           assignedTo: {
@@ -777,6 +791,7 @@ export const UpdateTaskStatus = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -884,6 +899,7 @@ export const completeTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           assignedTo: {
@@ -892,6 +908,7 @@ export const completeTask = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -937,7 +954,7 @@ export const getMyTasks = asyncMiddleware(
       if (status) {
         filter.status = status as string;
       }
-      
+
       if (priority) {
         filter.priority = priority as string;
       }
@@ -951,6 +968,7 @@ export const getMyTasks = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {
@@ -963,10 +981,12 @@ export const getMyTasks = asyncMiddleware(
         orderBy: {
           dueDate: "asc",
         },
-        ...( {cacheStrategy: {
-          swr: 60,
-          ttl: 30,
-        } }as any)
+        ...({
+          cacheStrategy: {
+            swr: 60,
+            ttl: 30,
+          },
+        } as any),
       });
 
       res.json(tasks);
@@ -1012,6 +1032,7 @@ export const getTasksCreatedByMe = asyncMiddleware(
               firstName: true,
               lastName: true,
               email: true,
+              role: true,
             },
           },
           patient: {

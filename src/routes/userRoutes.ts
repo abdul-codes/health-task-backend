@@ -10,7 +10,8 @@ import {
   rejectUser,
   getAllUsers,
   getUsersForDropdown,
-  setPushToken
+  setPushToken,
+  getUserStatistics
 } from "../controller/userController";
 import { validateUpdateProfile, validateUpdatePassword } from "../validation/userValidation";
 
@@ -33,6 +34,8 @@ router.delete("/account", deleteUserAccount);
 router.get("/pending", getPendingUsers);
 router.put("/approve/:userId", approveUser);
 router.delete("/reject/:userId", rejectUser);
+
+router.get("/statistics", getUserStatistics)
 
 
 // User routes for push token management
