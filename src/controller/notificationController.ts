@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { asyncMiddleware } from "../middleware/asyncMiddleware";
 import { prisma } from "../utils/db";
+import { AppError } from "../utils/AppError";
 
 /**
- * Get all notifications for the logged-in user
+ * Get all notifications for logged-in user
  * GET /api/notifications
  */
 export const getNotifications = asyncMiddleware(async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  console.log("Fetching notifications for user:", userId);
 
   const notifications = await prisma.notification.findMany({
     where: { userId },
@@ -18,8 +18,6 @@ export const getNotifications = asyncMiddleware(async (req: Request, res: Respon
       ttl: 30,
     } }as any)
   });
-
-  console.log("Found", notifications.length, "notifications");
 
   res.json(notifications);
 });
@@ -37,7 +35,7 @@ export const markAsRead = asyncMiddleware(async (req: Request, res: Response) =>
   });
 
   if (!notification) {
-    return res.status(404).json({ message: "Notification not found" });
+    throw new AppError('Notification not found', 404, 'notificationController');
   }
 
   const updatedNotification = await prisma.notification.update({

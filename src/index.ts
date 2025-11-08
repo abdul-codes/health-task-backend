@@ -59,10 +59,10 @@ app.get("/api/test", async (req: Request, res: Response) => {
 // });
 
 // use server.listen for socketio
-// const PORT = process.env.PORT || 8000;
-// server.listen(PORT, () => {
-//   console.log("Server running on localhost:8000");
-// });
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log("Server running on localhost:" + PORT);
+});
 
 // Error handling middleware
 app.use(errorHandler);
