@@ -7,3 +7,6 @@ node_modules/
 generated
 # Ignore compiled JavaScript output
 /dist/
+# Ignore log files
+logs/
+*.log
