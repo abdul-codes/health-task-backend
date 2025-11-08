@@ -10,11 +10,7 @@ import { UserRole } from "@/generated/prisma";
 
 // ADD THIS NEW FUNCTION
 export const getMe = asyncMiddleware(async (req: Request, res: Response) => {
-  // The `authenticateUser` middleware has already validated the token 
-  // and attached the user to the request object. If we've reached this
-  // point, the user is considered authenticated.
 
-  // We fetch the full user from the database to ensure the data is fresh.
   const user = await prisma.user.findUnique({
     where: { id: req.user!.id },
     select: {
@@ -28,7 +24,6 @@ export const getMe = asyncMiddleware(async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    // This case is unlikely if authenticateUser passed, but it's good practice.
     return res.status(404).json({ message: "User not found" });
   }
 

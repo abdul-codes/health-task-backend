@@ -3,8 +3,15 @@ import jwt from 'jsonwebtoken';
 
 
 // JWT Configuration
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN_SECRET  as string;
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN_SECRET  as string;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN_SECRET;
+if (!REFRESH_TOKEN) {
+  throw new Error('REFRESH_TOKEN_SECRET environment variable is required');
+}
+
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN_SECRET;
+if (!ACCESS_TOKEN) {
+  throw new Error('ACCESS_TOKEN_SECRET environment variable is required');
+}
 
 // Generate Access Token
 

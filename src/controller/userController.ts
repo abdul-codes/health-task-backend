@@ -3,14 +3,13 @@ import { asyncMiddleware } from "../middleware/asyncMiddleware";
 import { prisma } from "../utils/db";
 import bcrypt from "bcryptjs";
 import { UserRole } from "../generated/prisma";
-
+import { AppError } from "../utils/AppError";
 // Get user profile
 export const getUserProfile = asyncMiddleware(async (req: Request, res: Response) => {
-  try {
     const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      throw new AppError('Unauthorized', 401, 'userController');
     }
 
     const user = await prisma.user.findUnique({
@@ -33,19 +32,11 @@ export const getUserProfile = asyncMiddleware(async (req: Request, res: Response
     });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      throw new AppError('User not found', 404, 'userController');
     }
 
     res.json(user);
-  } catch (error) {
-    console.error("Get user profile error:", error);
-    res.status(500).json({
-      message: "Error fetching user profile",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-});
-
+})
 // Update user profile
 export const updateUserProfile = asyncMiddleware(async (req: Request, res: Response) => {
   try {

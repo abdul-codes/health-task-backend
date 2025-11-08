@@ -8,6 +8,7 @@ import patientRoutes from "./routes/patientRoutes";
 import taskRoutes from "./routes/taskRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import limiter from "./middleware/rateLimitMiddleware";
+import { errorHandler } from "./middleware/errorHandler";
 // import { initSocket } from "./utils/socket";
 // import http from "http";
 
@@ -19,6 +20,12 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+// app.use(cors({
+//   origin: ['https://yourapp.com', 'https://admin.yourapp.com'],
+//   credentials: true
+// }));
+
 app.use(limiter);
 
 app.use("/api/auth", authRoutes);
@@ -58,12 +65,6 @@ app.get("/api/test", async (req: Request, res: Response) => {
 // });
 
 // Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined,
-  });
-});
+app.use(errorHandler);
 
 module.exports = app;
