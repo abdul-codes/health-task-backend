@@ -4,6 +4,8 @@ import { prisma } from "../utils/db";
 import {
   createPatientSchema,
   updatePatientSchema,
+  createMedicalHistorySchema,
+  updateMedicalHistorySchema,
 } from "../validation/patientValidation";
 import { sendPushNotifications } from "../utils/pushNotification";
 import { AppError } from "../utils/AppError";
@@ -261,5 +263,271 @@ export const deletePatient = asyncMiddleware(
     ]);
 
     res.json({ message: "Patient deleted successfully" });
+  },
+);
+
+/**
+ * Add medical history entry for a patient
+ * POST /api/patients/:id/medical-history
+ */
+export const addMedicalHistory = asyncMiddleware(
+  async (req: Request, res: Response) => {
+    const { id: patientId } = req.params;
+    const userId = req.user?.id;
+
+    // Validate input using Zod schema
+    const validationResult = createMedicalHistorySchema.safeParse(req.body);
+
+    if (!validationResult.success) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: validationResult.error.format(),
+      });
+    }
+
+    const { eventType, title, description, severity, date, attachments } = validationResult.data;
+
+    // Check if patient exists
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+
+    if (!patient) {
+      throw new AppError('Patient not found', 404, 'patientController');
+    }
+
+    // Convert date string to Date object if provided
+    const eventDate = date ? new Date(date) : new Date();
+
+    // Create medical history entry
+    const medicalHistory = await prisma.medicalHistory.create({
+      data: {
+        patientId,
+        doctorId: userId,
+        eventType,
+        title,
+        description,
+        severity,
+        date: eventDate,
+        attachments: attachments ? {
+          create: attachments.map(attachment => ({
+            fileName: attachment.fileName,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl,
+            description: attachment.description,
+          }))
+        } : undefined,
+      },
+      include: {
+        doctor: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        attachments: true,
+      },
+    });
+
+    res.status(201).json({
+      message: "Medical history entry added successfully",
+      medicalHistory,
+    });
+
+    // Send notification to assigned users
+    const assignedUsers = await prisma.patient.findUnique({
+      where: { id: patientId },
+      select: {
+        assignedTo: {
+          select: { id: true },
+        },
+      },
+    });
+
+    if (assignedUsers && assignedUsers.assignedTo && assignedUsers.assignedTo.length > 0) {
+      const assignedUserIds = assignedUsers.assignedTo.map(user => user.id);
+      const notificationTitle = "New Medical History Entry";
+      const notificationBody = `New ${eventType.toLowerCase()} entry added for ${patient.name}: ${title}`;
+      
+      await sendPushNotifications(
+        assignedUserIds,
+        notificationTitle,
+        notificationBody,
+        { patientId, medicalHistoryId: medicalHistory.id }
+      );
+    }
+  },
+);
+
+/**
+ * Get medical history for a patient (timeline view with pagination)
+ * GET /api/patients/:id/medical-history
+ */
+export const getMedicalHistory = asyncMiddleware(
+  async (req: Request, res: Response) => {
+    const { id: patientId } = req.params;
+    const { page = '1', limit = '20', eventType, severity } = req.query;
+
+    // Check if patient exists
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+
+    if (!patient) {
+      throw new AppError('Patient not found', 404, 'patientController');
+    }
+
+    // Parse pagination parameters
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build where clause for filtering
+    let whereClause: any = { patientId };
+    
+    if (eventType) {
+      whereClause.eventType = eventType as string;
+    }
+    
+    if (severity) {
+      whereClause.severity = severity as string;
+    }
+
+    // Get medical history entries with pagination
+    const [medicalHistory, totalCount] = await Promise.all([
+      prisma.medicalHistory.findMany({
+        where: whereClause,
+        include: {
+          doctor: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          attachments: true,
+        },
+        orderBy: {
+          date: 'desc',
+        },
+        skip,
+        take: limitNum,
+      }),
+      prisma.medicalHistory.count({
+        where: whereClause,
+      }),
+    ]);
+
+    // Calculate pagination info
+    const totalPages = Math.ceil(totalCount / limitNum);
+    const hasNextPage = pageNum < totalPages;
+    const hasPrevPage = pageNum > 1;
+
+    res.json({
+      medicalHistory,
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalCount,
+        limit: limitNum,
+        hasNextPage,
+        hasPrevPage,
+      },
+    });
+  },
+);
+
+/**
+ * Update medical history entry
+ * PUT /api/patients/:patientId/medical-history/:id
+ */
+export const updateMedicalHistory = asyncMiddleware(
+  async (req: Request, res: Response) => {
+    const { patientId, id: medicalHistoryId } = req.params;
+
+    // Validate input using Zod schema
+    const validationResult = updateMedicalHistorySchema.safeParse(req.body);
+
+    if (!validationResult.success) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: validationResult.error.format(),
+      });
+    }
+
+    const { eventType, title, description, severity, date } = validationResult.data;
+
+    // Check if medical history entry exists and belongs to the patient
+    const existingMedicalHistory = await prisma.medicalHistory.findFirst({
+      where: {
+        id: medicalHistoryId,
+        patientId,
+      },
+    });
+
+    if (!existingMedicalHistory) {
+      throw new AppError('Medical history entry not found', 404, 'patientController');
+    }
+
+    // Convert date string to Date object if provided
+    const eventDate = date ? new Date(date) : undefined;
+
+    // Update medical history entry
+    const updatedMedicalHistory = await prisma.medicalHistory.update({
+      where: { id: medicalHistoryId },
+      data: {
+        eventType: eventType || undefined,
+        title: title || undefined,
+        description: description || undefined,
+        severity: severity || undefined,
+        date: eventDate || undefined,
+      },
+      include: {
+        doctor: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        attachments: true,
+      },
+    });
+
+    res.json({
+      message: "Medical history entry updated successfully",
+      medicalHistory: updatedMedicalHistory,
+    });
+  },
+);
+
+/**
+ * Delete medical history entry
+ * DELETE /api/patients/:patientId/medical-history/:id
+ */
+export const deleteMedicalHistory = asyncMiddleware(
+  async (req: Request, res: Response) => {
+    const { patientId, id: medicalHistoryId } = req.params;
+
+    // Check if medical history entry exists and belongs to the patient
+    const existingMedicalHistory = await prisma.medicalHistory.findFirst({
+      where: {
+        id: medicalHistoryId,
+        patientId,
+      },
+    });
+
+    if (!existingMedicalHistory) {
+      throw new AppError('Medical history entry not found', 404, 'patientController');
+    }
+
+    // Delete medical history entry (this will also delete related attachments due to cascade)
+    await prisma.medicalHistory.delete({
+      where: { id: medicalHistoryId },
+    });
+
+    res.json({ message: "Medical history entry deleted successfully" });
   },
 );

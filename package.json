@@ -8,7 +8,7 @@
     "dev": "nodemon",
     "devs": "ts-node-dev --respawn --transpile-only src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall":"prisma generate --no-engine"
+    "postinstall": "prisma generate --no-engine"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/multer": "^2.0.0",
     "@types/node": "^22.15.5",
     "@types/nodemailer": "^6.4.17",
     "express": "^5.1.0",
