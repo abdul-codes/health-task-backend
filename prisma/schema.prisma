@@ -37,6 +37,7 @@ model User {
   updatedAt        DateTime    @updatedAt
   createdPatients  Patient[]   @relation("CreatedPatients")
   assignedPatients Patient[] // Patients this user is assigned to
+  medicalEvents   MedicalHistory[] @relation("MedicalEvents")
   expoPushToken    String?     @unique
   notifications    Notification[]
 
@@ -78,6 +79,36 @@ enum TaskPriority {
   CRITICAL
 }
 
+enum MedicalEventType {
+  GENERAL
+  DIAGNOSIS
+  PRESCRIPTION
+  LAB_RESULT
+  VITAL_SIGNS
+  ALLERGY
+  SURGERY
+  VACCINATION
+  EMERGENCY
+  ADMISSION
+  DISCHARGE
+}
+
+enum MedicalSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AttachmentType {
+  DOCUMENT
+  IMAGE
+  VIDEO
+  AUDIO
+  XRAY
+  SCAN
+}
+
 model Task {
   id           String       @id @default(cuid())
   title        String
@@ -112,9 +143,46 @@ model Patient {
   createdById   String
   tasks         Task[]
   assignedTo    User[] // Users (doctors, nurses) assigned to this patient
+  medicalHistory MedicalHistory[] @relation("MedicalHistory")
   
   @@index([createdById])
   @@index([createdAt]) 
+}
+
+model MedicalHistory {
+  id          String    @id @default(cuid())
+  patientId   String
+  eventType   MedicalEventType @default(GENERAL)
+  title       String
+  description String
+  date        DateTime
+  doctorId    String?
+  severity    MedicalSeverity @default(MEDIUM)
+  attachments MedicalAttachment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  patient     Patient   @relation("MedicalHistory", fields: [patientId], references: [id], onDelete: Cascade)
+  doctor      User?     @relation("MedicalEvents", fields: [doctorId], references: [id])
+  
+  @@index([patientId])
+  @@index([date])
+  @@index([eventType])
+}
+
+model MedicalAttachment {
+  id          String   @id @default(cuid())
+  medicalHistoryId String
+  fileName    String
+  fileUrl     String
+  fileType    AttachmentType @default(DOCUMENT)
+  fileSize    Int
+  description String?
+  createdAt   DateTime @default(now())
+  
+  medicalHistory MedicalHistory @relation(fields: [medicalHistoryId], references: [id], onDelete: Cascade)
+  
+  @@index([medicalHistoryId])
 }
 
 model Department {
