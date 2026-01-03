@@ -120,7 +120,6 @@ export const createPatient = asyncMiddleware(
    res.json(patients);
  });
 
- // Add this new function to your patientController.ts
  
 /**
  * Get all patients for selection dropdowns.
@@ -131,10 +130,10 @@ export const createPatient = asyncMiddleware(
      select: {
        id: true,
        name: true,
-       roomNumber: true, // Including room number can be helpful for selection
+       roomNumber: true, 
      },
      orderBy: {
-       name: 'asc' // Sort alphabetically for a better user experience
+       name: 'asc'
      },
      ...( {cacheStrategy: {
       swr: 60,
@@ -142,7 +141,7 @@ export const createPatient = asyncMiddleware(
     } }as any)
    });
 
-   res.json(patients); // Send the direct array of patients
+   res.json(patients); 
  });
 
 
@@ -189,7 +188,6 @@ export const updatePatient = asyncMiddleware(
   async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    // Validate input using Zod schema
     const validationResult = updatePatientSchema.safeParse(req.body);
 
     if (!validationResult.success) {
