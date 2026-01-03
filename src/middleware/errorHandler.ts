@@ -3,7 +3,7 @@ import { AppError } from '../utils/AppError';
 import { logError } from '../utils/logger';
 
 export const errorHandler = (err: Error, req: Request, res: Response, _next: NextFunction) => {
-  // Console logging 
+  // Enhanced console logging for all environments
   console.error(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.error(`Controller: ${err instanceof AppError ? err.controller : 'unknown'}`);
   console.error(`Error: ${err.message}`);
@@ -11,7 +11,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
     console.error(`Stack: ${err.stack}`);
   }
 
-  // File logging (new)
+  // Structured logging (handles both Vercel and local environments)
   logError(err, req);
 
   // Simple response
