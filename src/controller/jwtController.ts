@@ -11,7 +11,6 @@ import { AppError } from "../utils/AppError";
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN_SECRET as string;
 
 export const refreshToken = asyncMiddleware(async (req: Request, res: Response) => {
-  // Read refreshToken from request body
   const {refreshToken} = req.body;
 
   if (!refreshToken) {

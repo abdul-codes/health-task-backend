@@ -3,10 +3,7 @@ import { asyncMiddleware } from "../middleware/asyncMiddleware";
 import { prisma } from "../utils/db";
 import { AppError } from "../utils/AppError";
 
-/**
- * Get all notifications for logged-in user
- * GET /api/notifications
- */
+
 export const getNotifications = asyncMiddleware(async (req: Request, res: Response) => {
   const userId = req.user?.id;
 
@@ -22,10 +19,7 @@ export const getNotifications = asyncMiddleware(async (req: Request, res: Respon
   res.json(notifications);
 });
 
-/**
- * Mark a notification as read
- * PATCH /api/notifications/:id/read
- */
+
 export const markAsRead = asyncMiddleware(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const { id } = req.params;
@@ -46,10 +40,7 @@ export const markAsRead = asyncMiddleware(async (req: Request, res: Response) =>
   res.json(updatedNotification);
 });
 
-/**
- * Mark all notifications as read
- * PATCH /api/notifications/read/all
- */
+
 export const markAllAsRead = asyncMiddleware(async (req: Request, res: Response) => {
   const userId = req.user?.id;
 

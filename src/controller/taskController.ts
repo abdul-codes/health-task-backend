@@ -8,7 +8,6 @@ import {
   statusUpdateSchema,
 } from "../validation/taskValidation";
 import { TaskStatus } from "../generated/prisma";
-import { getIO } from "@/utils/socket";
 import { sendPushNotifications } from "../utils/pushNotification";
 import { AppError } from "../utils/AppError";
 
@@ -101,30 +100,6 @@ export const createTask = asyncMiddleware(
       },
     });
 
-    // Web Socket Event
-    // try {
-    //   const io = getIO();
-    //   // Notify the user who the task is assigned to
-    //   // No user will be in the list more than once.
-    //   const recipientIds = new Set<string>();
-
-    //   if (task.createdBy?.id) {
-    //     recipientIds.add(task.createdBy.id);
-    //   }
-
-    //   if (task.assignedTo?.id) {
-    //     recipientIds.add(task.assignedTo.id);
-    //   }
-
-    //   if (recipientIds.size > 0) {
-    //     io.to([...recipientIds]).emit("taskCreated", task);
-    //   }
-    // } catch (error) {
-    //   console.error("Socket.IO emission failed:", error);
-    //   // Decide if you want to do anything else if sockets fail.
-    //   // The main HTTP response will still succeed.
-    // }
-    // Websocket ends
     // Push Notification
     const notificationRecipients = new Set<string>();
     if (assignedToId) {
@@ -559,7 +534,7 @@ export const assignTask = asyncMiddleware(
       },
     });
 
-    // --- Trigger Notification ---
+    //  Trigger Notification 
     const notificationTitle = `Task Assigned: ${existingTask.title}`;
     const notificationBody = `You have been assigned an existing task.`;
     await sendPushNotifications(
@@ -568,7 +543,6 @@ export const assignTask = asyncMiddleware(
       notificationBody,
       { taskId: updatedTask.id },
     );
-    // --- End Notification ---
 
     res.json({
       message: "Task assigned successfully",
@@ -721,7 +695,7 @@ export const UpdateTaskStatus = asyncMiddleware(
       },
     });
     // After successful status update:
-    // --- Comprehensive Notification Logic ---
+    //  Notification  
     if (updatedTask.createdById) {
       let notificationTitle = "";
       let notificationBody = "";
@@ -764,7 +738,6 @@ export const UpdateTaskStatus = asyncMiddleware(
         );
       }
     }
-    // --- End Notification Logic ---
 
     res.json(updatedTask);
   },

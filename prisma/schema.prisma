@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -11,35 +5,34 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL") // FOR SUPABASE
+  url      = env("TEST_DATABASE_URL")
 }
 
 model User {
-  id               String      @id @unique @default(cuid())
-  email            String      @unique
-  phoneNumber      String?     @unique
+  id               String           @id @unique @default(cuid())
+  email            String           @unique
+  phoneNumber      String?          @unique
   password         String
   firstName        String
   lastName         String
-  createdTasks     Task[]      @relation("CreatedTasks")
-  assignedTasks    Task[]      @relation("AssignedTasks")
-  department       Department? @relation(fields: [departmentId], references: [id])
-  departmentId     String?
   profilePicture   String?
-  role             UserRole    @default(DOCTOR)
-  isApproved       Boolean     @default(false)
-  approvedBy       User?       @relation("ApprovedUsers", fields: [approvedById], references: [id])
-  approvedById     String?
-  approvedUsers    User[]      @relation("ApprovedUsers")
+  role             UserRole         @default(DOCTOR)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   approvedAt       DateTime?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  createdPatients  Patient[]   @relation("CreatedPatients")
-  assignedPatients Patient[] // Patients this user is assigned to
-  medicalEvents   MedicalHistory[] @relation("MedicalEvents")
-  expoPushToken    String?     @unique
+  approvedById     String?
+  departmentId     String?
+  isApproved       Boolean          @default(false)
+  expoPushToken    String?          @unique
+  medicalEvents    MedicalHistory[] @relation("MedicalEvents")
   notifications    Notification[]
+  createdPatients  Patient[]        @relation("CreatedPatients")
+  assignedTasks    Task[]           @relation("AssignedTasks")
+  createdTasks     Task[]           @relation("CreatedTasks")
+  approvedBy       User?            @relation("ApprovedUsers", fields: [approvedById], references: [id])
+  approvedUsers    User[]           @relation("ApprovedUsers")
+  department       Department?      @relation(fields: [departmentId], references: [id])
+  assignedPatients Patient[]        @relation("PatientToUser")
 
   @@index([email, role])
   @@index([isApproved])
@@ -52,10 +45,91 @@ model Notification {
   data      Json?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Task {
+  id           String       @id @default(cuid())
+  title        String
+  description  String
+  status       TaskStatus   @default(PENDING)
+  priority     TaskPriority @default(MEDIUM)
+  dueDate      DateTime
+  createdAt    DateTime     @default(now())
+  createdById  String
+  assignedToId String?
+  patientId    String?
+  assignedTo   User?        @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  createdBy    User         @relation("CreatedTasks", fields: [createdById], references: [id])
+  patient      Patient?     @relation(fields: [patientId], references: [id])
+
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([patientId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([createdAt])
+}
+
+model Patient {
+  id             String           @id @default(cuid())
+  name           String
+  dob            DateTime
+  medicalRecord  String
+  createdAt      DateTime         @default(now())
+  createdById    String
+  roomNumber     String?
+  medicalHistory MedicalHistory[] @relation("MedicalHistory")
+  createdBy      User             @relation("CreatedPatients", fields: [createdById], references: [id])
+  tasks          Task[]
+  assignedTo     User[]           @relation("PatientToUser")
+
+  @@index([createdById])
+  @@index([createdAt])
+}
+
+model MedicalHistory {
+  id          String              @id @default(cuid())
+  patientId   String
+  eventType   MedicalEventType    @default(GENERAL)
+  title       String
+  description String
+  date        DateTime
+  doctorId    String?
+  severity    MedicalSeverity     @default(MEDIUM)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  attachments MedicalAttachment[]
+  doctor      User?               @relation("MedicalEvents", fields: [doctorId], references: [id])
+  patient     Patient             @relation("MedicalHistory", fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([date])
+  @@index([eventType])
+}
+
+model MedicalAttachment {
+  id               String         @id @default(cuid())
+  medicalHistoryId String
+  fileName         String
+  fileUrl          String
+  fileType         AttachmentType @default(DOCUMENT)
+  fileSize         Int
+  description      String?
+  createdAt        DateTime       @default(now())
+  medicalHistory   MedicalHistory @relation(fields: [medicalHistoryId], references: [id], onDelete: Cascade)
+
+  @@index([medicalHistoryId])
+}
+
+model Department {
+  id          String @id @default(cuid())
+  name        String
+  description String
+  users       User[]
 }
 
 enum UserRole {
@@ -107,87 +181,4 @@ enum AttachmentType {
   AUDIO
   XRAY
   SCAN
-}
-
-model Task {
-  id           String       @id @default(cuid())
-  title        String
-  description  String
-  status       TaskStatus   @default(PENDING)
-  priority     TaskPriority @default(MEDIUM)
-  dueDate      DateTime
-  createdAt    DateTime     @default(now())
-  createdBy    User         @relation("CreatedTasks", fields: [createdById], references: [id])
-  createdById  String
-  assignedTo   User?        @relation("AssignedTasks", fields: [assignedToId], references: [id])
-  assignedToId String?
-  patient      Patient?     @relation(fields: [patientId], references: [id])
-  patientId    String?
-  
-  @@index([createdById])
-  @@index([assignedToId])
-  @@index([patientId])
-  @@index([status])
-  @@index([dueDate]) 
-  @@index([createdAt])
-}
-
-model Patient {
-  id            String   @id @default(cuid())
-  name          String
-  dob           DateTime
-  roomNumber    String?
-  medicalRecord String
-  createdAt     DateTime @default(now())
-  createdBy     User?    @relation("CreatedPatients", fields: [createdById], references: [id])
-  createdById   String
-  tasks         Task[]
-  assignedTo    User[] // Users (doctors, nurses) assigned to this patient
-  medicalHistory MedicalHistory[] @relation("MedicalHistory")
-  
-  @@index([createdById])
-  @@index([createdAt]) 
-}
-
-model MedicalHistory {
-  id          String    @id @default(cuid())
-  patientId   String
-  eventType   MedicalEventType @default(GENERAL)
-  title       String
-  description String
-  date        DateTime
-  doctorId    String?
-  severity    MedicalSeverity @default(MEDIUM)
-  attachments MedicalAttachment[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  patient     Patient   @relation("MedicalHistory", fields: [patientId], references: [id], onDelete: Cascade)
-  doctor      User?     @relation("MedicalEvents", fields: [doctorId], references: [id])
-  
-  @@index([patientId])
-  @@index([date])
-  @@index([eventType])
-}
-
-model MedicalAttachment {
-  id          String   @id @default(cuid())
-  medicalHistoryId String
-  fileName    String
-  fileUrl     String
-  fileType    AttachmentType @default(DOCUMENT)
-  fileSize    Int
-  description String?
-  createdAt   DateTime @default(now())
-  
-  medicalHistory MedicalHistory @relation(fields: [medicalHistoryId], references: [id], onDelete: Cascade)
-  
-  @@index([medicalHistoryId])
-}
-
-model Department {
-  id          String @id @default(cuid())
-  name        String
-  description String
-  users       User[]
 }

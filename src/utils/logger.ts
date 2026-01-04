@@ -1,12 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 
-const logDir = path.join(__dirname, '../logs');
-const logFile = path.join(logDir, 'errors.log');
+// Check if running on Vercel
+const isVercel = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
-// Ensure logs directory exists
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
+let logFile: string | null = null;
+
+// Only set up file logging for local development
+if (!isVercel) {
+  const logDir = path.join(__dirname, '../../logs');
+  logFile = path.join(logDir, 'errors.log');
+
+  // Ensure logs directory exists
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
 }
 
 export const logError = (error: any, req: any) => {
@@ -19,5 +27,15 @@ export const logError = (error: any, req: any) => {
     stack: error.stack
   };
   
-  fs.appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
+  // Always log to console (Vercel captures this)
+  console.error('[ERROR]', JSON.stringify(logEntry));
+  
+  // Only write to file in local development
+  if (!isVercel && logFile) {
+    try {
+      fs.appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
+    } catch (err) {
+      console.error('Failed to write to log file:', err);
+    }
+  }
 };

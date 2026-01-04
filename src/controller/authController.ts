@@ -7,9 +7,7 @@ import crypto from "crypto"
 import { UserRole } from "@/generated/prisma";
 import { AppError } from "../utils/AppError";
 
-// ... (keep existing imports and functions)
 
-// ADD THIS NEW FUNCTION
 export const getMe = asyncMiddleware(async (req: Request, res: Response) => {
 
   const user = await prisma.user.findUnique({
@@ -87,8 +85,8 @@ export const registerUser = asyncMiddleware(async (req: Request, res: Response) 
     select: { email: true }
   });
 
-  // Here you could add code to notify admins about the new registration
-  // For example, sending emails to all admin users
+  //notify admins about the new registration
+  // sending emails to all admin users
 
   res.status(201).json({ 
     message: 'Registration successful. Your account is pending approval by an administrator.',
