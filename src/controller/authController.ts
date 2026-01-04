@@ -9,6 +9,47 @@ import { AppError } from "../utils/AppError";
 
 // ... (keep existing imports and functions)
 
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Get current user profile
+ *     description: Retrieve the currently authenticated user's profile information
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: User profile retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 id:
+ *                   type: "string"
+ *                   description: "User unique identifier"
+ *                 email:
+ *                   type: "string"
+ *                   description: "User email address"
+ *                 firstName:
+ *                   type: "string"
+ *                   description: "User first name"
+ *                 lastName:
+ *                   type: "string"
+ *                   description: "User last name"
+ *                 role:
+ *                   type: "string"
+ *                   description: "User role in system"
+ *       "404":
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
+export const getMe = asyncMiddleware(async (req: Request, res: Response) => {
+
 // ADD THIS NEW FUNCTION
 export const getMe = asyncMiddleware(async (req: Request, res: Response) => {
 
@@ -29,19 +70,7 @@ export const getMe = asyncMiddleware(async (req: Request, res: Response) => {
   }
 
   res.status(200).json(user);
-});
-
-
-
-interface RegisterUserBody {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  role?: UserRole;
-}
-
-
+  });
 
 export const registerUser = asyncMiddleware(async (req: Request, res: Response) => {
   const {
@@ -94,10 +123,74 @@ export const registerUser = asyncMiddleware(async (req: Request, res: Response) 
     message: 'Registration successful. Your account is pending approval by an administrator.',
     user: newUser
   });
-});
+  });
+  
 
-
-// Login Controller
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticate user with email and password
+ *     tags: [Authentication]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User email address
+ *                 example: admin@medic.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 8
+ *                 description: User password
+ *                 example: Admin123!@#
+ *     responses:
+ *       "200":
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 user:
+ *                   $ref: "#/components/schemas/User"
+ *                 accessToken:
+ *                   type: string
+ *                   description: JWT access token for authenticated requests
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 refreshToken:
+ *                   type: string
+ *                   description: JWT refresh token for obtaining new access tokens
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       "400":
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       "401":
+ *         description: Unauthorized - invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       "403":
+ *         description: Forbidden - account pending approval
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
 export const loginUser = asyncMiddleware(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -146,9 +239,29 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
     accessToken: accessToken, // Send only access token in the body
     refreshToken: refreshToken
   });
-})
+});
 
-// Logout Controller
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: User logout
+ *     description: Logout current user and clear refresh token cookie
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Logout successful
+ */
 export const logoutUser = asyncMiddleware(async (req: Request, res: Response) => {
   // Clear the refresh token cookie
   res.clearCookie('refreshToken', {
