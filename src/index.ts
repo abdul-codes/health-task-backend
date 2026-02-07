@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes";
 import patientRoutes from "./routes/patientRoutes";
 import taskRoutes from "./routes/taskRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
+import scannedDocumentRoutes from "./routes/scannedDocumentRoutes";
 import limiter from "./middleware/rateLimitMiddleware";
 import { errorHandler } from "./middleware/errorHandler";
 // import { initSocket } from "./utils/socket";
@@ -33,6 +34,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/scanned-documents", scannedDocumentRoutes);
 
 //To use it only for a certain path (e.g., limit only calls to the /auth/* endpoints),
 // specify the url as the first parameter in app.use
