@@ -79,19 +79,20 @@ enum TaskPriority {
 }
 
 model Task {
-  id           String       @id @default(cuid())
-  title        String
-  description  String
-  status       TaskStatus   @default(PENDING)
-  priority     TaskPriority @default(MEDIUM)
-  dueDate      DateTime
-  createdAt    DateTime     @default(now())
-  createdBy    User         @relation("CreatedTasks", fields: [createdById], references: [id])
-  createdById  String
-  assignedTo   User?        @relation("AssignedTasks", fields: [assignedToId], references: [id])
-  assignedToId String?
-  patient      Patient?     @relation(fields: [patientId], references: [id])
-  patientId    String?
+  id               String            @id @default(cuid())
+  title            String
+  description      String
+  status           TaskStatus        @default(PENDING)
+  priority         TaskPriority      @default(MEDIUM)
+  dueDate          DateTime
+  createdAt        DateTime          @default(now())
+  createdBy        User              @relation("CreatedTasks", fields: [createdById], references: [id])
+  createdById      String
+  assignedTo       User?             @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  assignedToId     String?
+  patient          Patient?          @relation(fields: [patientId], references: [id])
+  patientId        String?
+  scannedDocuments ScannedDocument[]
   
   @@index([createdById])
   @@index([assignedToId])
@@ -102,16 +103,17 @@ model Task {
 }
 
 model Patient {
-  id            String   @id @default(cuid())
-  name          String
-  dob           DateTime
-  roomNumber    String?
-  medicalRecord String
-  createdAt     DateTime @default(now())
-  createdBy     User?    @relation("CreatedPatients", fields: [createdById], references: [id])
-  createdById   String
-  tasks         Task[]
-  assignedTo    User[] // Users (doctors, nurses) assigned to this patient
+  id               String            @id @default(cuid())
+  name             String
+  dob              DateTime
+  roomNumber       String?
+  medicalRecord    String
+  createdAt        DateTime          @default(now())
+  createdBy        User?             @relation("CreatedPatients", fields: [createdById], references: [id])
+  createdById      String
+  tasks            Task[]
+  assignedTo       User[] // Users (doctors, nurses) assigned to this patient
+  scannedDocuments ScannedDocument[]
   
   @@index([createdById])
   @@index([createdAt]) 
@@ -122,4 +124,57 @@ model Department {
   name        String
   description String
   users       User[]
+}
+
+enum DocumentType {
+  PATIENT_RECORD
+  PRESCRIPTION
+  LAB_RESULT
+  TASK_NOTE
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCED
+  FAILED
+}
+
+model ScannedDocument {
+  id            String       @id @default(cuid())
+  patientId     String?
+  patient       Patient?     @relation(fields: [patientId], references: [id])
+  taskId        String?
+  task          Task?        @relation(fields: [taskId], references: [id])
+  documentType  DocumentType
+  r2ObjectKey   String?      // Cloudflare R2 object key
+  extractedData Json         // Structured extracted fields
+  rawText       String?      // Full OCR text (optional, for debugging)
+  confidence    Float
+  isVerified    Boolean      @default(false)
+  syncStatus    SyncStatus   @default(PENDING)
+  retryCount    Int          @default(0)
+  errorLog      String?      // Store error messages for failed syncs
+  createdBy     String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  @@index([patientId])
+  @@index([createdBy])
+  @@index([syncStatus])
+  @@index([createdAt])
+  @@index([documentType])
+}
+
+model ScanErrorLog {
+  id          String   @id @default(cuid())
+  scanId      String
+  errorMessage String
+  stackTrace  String?
+  context     String?  // JSON string of context data
+  timestamp   DateTime @default(now())
+  resolved    Boolean  @default(false)
+  
+  @@index([scanId])
+  @@index([timestamp])
+  @@index([resolved])
 }
