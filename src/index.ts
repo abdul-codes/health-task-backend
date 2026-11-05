@@ -8,7 +8,6 @@ import patientRoutes from "./routes/patientRoutes";
 import taskRoutes from "./routes/taskRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import scannedDocumentRoutes from "./routes/scannedDocumentRoutes";
-import limiter from "./middleware/rateLimitMiddleware";
 import { errorHandler } from "./middleware/errorHandler";
 // import { initSocket } from "./utils/socket";
 // import http from "http";
@@ -27,18 +26,16 @@ app.use(cors());
 //   credentials: true
 // }));
 
-app.use(limiter);
+// Vercel sits in front of the app; trust its X-Forwarded-For so req.ip is the client's IP
+app.set("trust proxy", 1);
 
+// Rate limiting is applied per route in authRoutes (see rateLimitMiddleware)
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/scanned-documents", scannedDocumentRoutes);
-
-//To use it only for a certain path (e.g., limit only calls to the /auth/* endpoints),
-// specify the url as the first parameter in app.use
-// app.use('/auth', limiter)
 
 app.get("/api/test", async (req: Request, res: Response) => {
   res.json({ messsage: "hello and welcome back" });

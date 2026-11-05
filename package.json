@@ -8,7 +8,7 @@
     "dev": "nodemon",
     "devs": "ts-node-dev --respawn --transpile-only src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall":"prisma generate --no-engine"
+    "postinstall": "prisma generate --no-engine"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1156.0",
+    "@aws-sdk/s3-request-presigner": "^3.1156.0",
     "@prisma/client": "^6.0.1",
     "@prisma/extension-accelerate": "^2.0.1",
     "@types/cors": "^2.8.17",
