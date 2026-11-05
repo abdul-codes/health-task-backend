@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import { asyncMiddleware } from "../middleware/asyncMiddleware";
 import { prisma } from "../utils/db";
 import bcrypt from "bcryptjs"
-import { generateAccessToken, generateRefreshToken } from "../utils/generateJwt";
+import { generateAccessToken } from "../utils/generateJwt";
+import { issueRefreshToken, revokeRefreshToken } from "../utils/refreshToken";
+import { BCRYPT_ROUNDS } from "../utils/password";
 import crypto from "crypto"
 import { UserRole } from "@/generated/prisma";
 import { AppError } from "../utils/AppError";
@@ -59,7 +61,7 @@ export const registerUser = asyncMiddleware(async (req: Request, res: Response) 
   }
 
   // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
   // Create user with isApproved set to false by default
   const newUser = await prisma.user.create({
@@ -112,13 +114,6 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
     });
   }
 
-  // Check if account is approved
-  // if (!user.isApproved) {
-  //   return res.status(403).json({
-  //     message: 'Your account is pending approval by an administrator. Please try again later.'
-  //   });
-  // }
-  
   // Verify password
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
@@ -127,9 +122,16 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
     });
   }
 
+  // Check approval only after the password matches, so this doesn't reveal which emails are registered
+  if (!user.isApproved) {
+    return res.status(403).json({
+      message: 'Your account is pending approval by an administrator. Please try again later.'
+    });
+  }
+
   // Generate tokens
   const accessToken = generateAccessToken(user.id, user.role);
-  const refreshToken = generateRefreshToken(user.id)
+  const refreshToken = await issueRefreshToken(user.id)
 
   res.json({
     message: 'Login successful',
@@ -150,6 +152,11 @@ export const loginUser = asyncMiddleware(async (req: Request, res: Response) => 
 
 // Logout Controller
 export const logoutUser = asyncMiddleware(async (req: Request, res: Response) => {
+  const { refreshToken } = req.body ?? {};
+  if (typeof refreshToken === 'string') {
+    await revokeRefreshToken(refreshToken);
+  }
+
   // Clear the refresh token cookie
   res.clearCookie('refreshToken', {
     httpOnly: true,

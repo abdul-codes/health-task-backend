@@ -4,6 +4,9 @@ import { prisma } from "../utils/db";
 import bcrypt from "bcryptjs";
 import { UserRole } from "../generated/prisma";
 import { AppError } from "../utils/AppError";
+import { BCRYPT_ROUNDS } from "../utils/password";
+import { generateAccessToken } from "../utils/generateJwt";
+import { issueRefreshToken, revokeAllRefreshTokens } from "../utils/refreshToken";
 // Get user profile
 export const getUserProfile = asyncMiddleware(async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -121,7 +124,7 @@ export const updateUserPassword = asyncMiddleware(async (req: Request, res: Resp
   }
 
   // Hash new password
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
 
   // Update password
   await prisma.user.update({
@@ -129,7 +132,12 @@ export const updateUserPassword = asyncMiddleware(async (req: Request, res: Resp
     data: { password: hashedPassword },
   });
 
-  res.json({ message: "Password updated successfully" });
+  // Sign out every other device, then give this device a fresh session
+  await revokeAllRefreshTokens(userId);
+  const accessToken = generateAccessToken(userId, req.user!.role);
+  const refreshToken = await issueRefreshToken(userId);
+
+  res.json({ message: "Password updated successfully", accessToken, refreshToken });
 });
 
 // Delete user account

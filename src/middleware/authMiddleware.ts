@@ -47,6 +47,7 @@ export const authenticateUser = asyncMiddleware(async (
         id: true,
         email: true,
         role: true,
+        isApproved: true,
       },
     });
 
@@ -57,8 +58,14 @@ export const authenticateUser = asyncMiddleware(async (
       });
     }
 
+    if (!user.isApproved) {
+      return res.status(403).json({
+        message: "Your account is pending approval by an administrator.",
+      });
+    }
+
     // Attach user to request
-    req.user = user;
+    req.user = { id: user.id, email: user.email, role: user.role };
 
     next();
   } catch (error) {
